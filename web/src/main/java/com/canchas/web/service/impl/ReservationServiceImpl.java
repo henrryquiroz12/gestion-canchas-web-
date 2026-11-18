@@ -24,7 +24,6 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service("reservationService")
 @RequiredArgsConstructor
@@ -140,40 +139,29 @@ public class ReservationServiceImpl implements ReservationService {
     @Override
     public DashboardStatsDTO getDashboardStats() {
         DashboardStatsDTO stats = new DashboardStatsDTO();
-        List<Reservation> allReservations = reservationRepository.findAll();
         LocalDate today = LocalDate.now(clock);
         LocalDate startOfWeek = today.with(DayOfWeek.MONDAY);
         LocalDate endOfWeek = today.with(DayOfWeek.SUNDAY);
+        var cancelled = Reservation.ReservationStatus.CANCELADO;
 
-        List<Reservation> weekReservations = allReservations.stream()
-                .filter(r -> !r.getReservationDate().isBefore(startOfWeek) && !r.getReservationDate().isAfter(endOfWeek))
-                .filter(r -> r.getStatus() != Reservation.ReservationStatus.CANCELADO)
-                .collect(Collectors.toList());
+        stats.setWeeklyReservations(reservationRepository.countForDashboard(startOfWeek, endOfWeek, cancelled));
+        BigDecimal weeklyRevenue = reservationRepository.sumForDashboard(startOfWeek, endOfWeek, cancelled);
+        stats.setWeeklyRevenue(weeklyRevenue == null ? BigDecimal.ZERO : weeklyRevenue);
 
-        stats.setWeeklyReservations(weekReservations.size());
-        stats.setWeeklyRevenue(weekReservations.stream().map(Reservation::getTotalAmount).reduce(BigDecimal.ZERO, BigDecimal::add));
-
-        List<BigDecimal> monthlySales = new ArrayList<>();
-        for (int month = 1; month <= 12; month++) {
-            int m = month;
-            BigDecimal total = allReservations.stream()
-                    .filter(r -> r.getReservationDate().getYear() == today.getYear())
-                    .filter(r -> r.getReservationDate().getMonthValue() == m)
-                    .filter(r -> r.getStatus() != Reservation.ReservationStatus.CANCELADO)
-                    .map(Reservation::getTotalAmount)
-                    .reduce(BigDecimal.ZERO, BigDecimal::add);
-            monthlySales.add(total);
+        List<BigDecimal> monthlySales = new ArrayList<>(Collections.nCopies(12, BigDecimal.ZERO));
+        LocalDate startOfYear = today.withDayOfYear(1);
+        for (Object[] total : reservationRepository.monthlyTotalsForDashboard(
+                startOfYear, startOfYear.plusYears(1).minusDays(1), cancelled)) {
+            monthlySales.set(((Number) total[0]).intValue() - 1, (BigDecimal) total[1]);
         }
         stats.setMonthlySales(monthlySales);
 
         Map<String, BigDecimal> salesByCourtType = new LinkedHashMap<>();
         for (Court.CourtType type : Court.CourtType.values()) {
-            BigDecimal total = allReservations.stream()
-                    .filter(r -> r.getCourt().getType() == type)
-                    .filter(r -> r.getStatus() != Reservation.ReservationStatus.CANCELADO)
-                    .map(Reservation::getTotalAmount)
-                    .reduce(BigDecimal.ZERO, BigDecimal::add);
-            salesByCourtType.put(type.name(), total);
+            salesByCourtType.put(type.name(), BigDecimal.ZERO);
+        }
+        for (Object[] total : reservationRepository.courtTypeTotalsForDashboard(cancelled)) {
+            salesByCourtType.put(((Court.CourtType) total[0]).name(), (BigDecimal) total[1]);
         }
         stats.setSalesByCourtType(salesByCourtType);
         return stats;

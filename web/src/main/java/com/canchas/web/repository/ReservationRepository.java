@@ -15,6 +15,21 @@ import java.util.List;
 
 public interface ReservationRepository extends JpaRepository<Reservation, Long> {
 
+    @Query("SELECT COUNT(r) FROM Reservation r WHERE r.reservationDate BETWEEN :start AND :end AND r.status <> :excluded")
+    long countForDashboard(@Param("start") LocalDate start, @Param("end") LocalDate end,
+                           @Param("excluded") Reservation.ReservationStatus excluded);
+
+    @Query("SELECT SUM(r.totalAmount) FROM Reservation r WHERE r.reservationDate BETWEEN :start AND :end AND r.status <> :excluded")
+    java.math.BigDecimal sumForDashboard(@Param("start") LocalDate start, @Param("end") LocalDate end,
+                                        @Param("excluded") Reservation.ReservationStatus excluded);
+
+    @Query("SELECT MONTH(r.reservationDate), SUM(r.totalAmount) FROM Reservation r WHERE r.reservationDate BETWEEN :start AND :end AND r.status <> :excluded GROUP BY MONTH(r.reservationDate)")
+    List<Object[]> monthlyTotalsForDashboard(@Param("start") LocalDate start, @Param("end") LocalDate end,
+                                            @Param("excluded") Reservation.ReservationStatus excluded);
+
+    @Query("SELECT r.court.type, SUM(r.totalAmount) FROM Reservation r WHERE r.status <> :excluded GROUP BY r.court.type")
+    List<Object[]> courtTypeTotalsForDashboard(@Param("excluded") Reservation.ReservationStatus excluded);
+
     @Query("SELECT r FROM Reservation r JOIN FETCH r.client u JOIN FETCH u.persona p JOIN FETCH r.court WHERE p.dni = :dni ORDER BY r.reservationDate DESC, r.startTime DESC, r.id DESC")
     List<Reservation> searchByClientDni(@Param("dni") String dni, Pageable limit);
 
