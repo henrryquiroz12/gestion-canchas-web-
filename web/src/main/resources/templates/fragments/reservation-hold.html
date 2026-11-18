@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<th:block th:fragment="banner">
+    <aside th:if="${visitorHold != null}" id="reservationHoldBanner"
+           th:data-state="${visitorHold.status}" th:data-remaining="${visitorHold.remainingSeconds}"
+           th:data-token="${visitorHold.token}" th:data-status-url="@{/retenciones}"
+           th:data-cancel-url="@{/retenciones/cancelar}"
+           th:data-csrf-name="${_csrf.parameterName}" th:data-csrf-token="${_csrf.token}"
+           style="padding: 1rem; margin: 1rem 0; border: 1px solid #b6d9b9; border-radius: 10px; background: #f1f8f2; color: #183b24;">
+        <strong>Tu horario seleccionado</strong>
+        <p style="margin: .4rem 0;" th:text="${visitorHold.courtName + ' · ' + visitorHold.date + ' · ' + visitorHold.startTime}"></p>
+        <p data-hold-message role="status" style="margin: .4rem 0;">El horario se conserva mientras completas el registro y confirmas tu reserva.</p>
+        <p>Tiempo restante: <span data-hold-timer role="timer" aria-live="off"></span></p>
+        <button data-hold-cancel type="button" class="btn btn-outline-secondary btn-sm">Cancelar retención</button>
+        <a th:href="@{/retenciones/continuar}" class="btn btn-outline-secondary btn-sm" data-hold-resume>Continuar reserva</a>
+        <a th:href="@{/canchas/{id}(id=${visitorHold.courtId})}" class="btn btn-link btn-sm">Consultar disponibilidad</a>
+    </aside>
+    <script th:src="@{/js/reservation-hold.js}"></script>
+</th:block>
+</html>

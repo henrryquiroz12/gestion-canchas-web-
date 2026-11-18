@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nosotros - Fredy Queen Soccer</title>
+    <link rel="icon" type="image/png" th:href="@{/img/favicon.png}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/global.css}">
+    <link rel="stylesheet" th:href="@{/css/public.css}">
+    <link rel="stylesheet" th:href="@{/css/nosotros.css}">
+</head>
+<body>
+
+    <!-- Skip Link WCAG -->
+    <a href="#main-content" class="skip-link">Saltar al contenido principal</a>
+
+    <!-- Navbar -->
+    <div th:replace="~{fragments/layout :: navbar}"></div>
+
+    <!-- Contenido Principal -->
+    <main id="main-content" class="nosotros-page">
+
+        <!-- 1. Hero Institucional -->
+        <section class="nosotros-hero">
+            <div class="container-fqs text-center">
+                <div class="nosotros-logo-wrap">
+                    <img th:src="@{/images/brand/logo-fredy-queen-soccer.jpg}"
+                         alt="Logo oficial de Fredy Queen Soccer"
+                         class="nosotros-brand-logo"
+                         onerror="this.style.display='none';">
+                </div>
+                <div class="nosotros-badge">
+                    <i class="bi bi-shield-fill-check" aria-hidden="true"></i> NOSOTROS
+                </div>
+                <h1 class="nosotros-title">Nuestra Historia</h1>
+                <p class="nosotros-subtitle">
+                    Fredy Queen Soccer · Complejo deportivo de fútbol en Trujillo, Perú.
+                </p>
+            </div>
+        </section>
+
+        <!-- 2. Nuestra Historia (Integrada desde Inicio) -->
+        <section class="nosotros-section">
+            <div class="container-fqs">
+                <article class="nosotros-story-card" aria-label="Historia del complejo">
+                    <p class="nosotros-story-lead">
+                        Fredy Queen Soccer es un complejo deportivo ubicado en Trujillo, pensado para que amigos, equipos y familias puedan disfrutar del fútbol en espacios preparados para cada partido.
+                    </p>
+                    <p class="nosotros-story-text">
+                        Ubicados en la ciudad de Trujillo, ofrecemos 10 canchas con grass sintético (8 normales y 2 grandes), sistema de iluminación nocturna para partidos de tarde y noche, y reserva de horarios en turnos de 60 minutos con total transparencia. Nuestro objetivo es que organizar tu partido sea tan emocionante y rápido como jugarlo.
+                    </p>
+                </article>
+            </div>
+        </section>
+
+        <!-- 3. Misión, Visión y Valores -->
+        <section class="nosotros-section" style="background-color: #FFFFFF; border-top: 1px solid #E2E8F0; border-bottom: 1px solid #E2E8F0;">
+            <div class="container-fqs">
+                <div class="nosotros-section-header text-center">
+                    <span class="badge-sub">Institucional</span>
+                    <h2 class="section-heading">Misión, Visión y Valores</h2>
+                    <p class="section-subtitle">Los principios que guían nuestro servicio diario a los deportistas de Trujillo.</p>
+                </div>
+
+                <div class="mvv-grid">
+                    <div class="mvv-card">
+                        <div class="mvv-icon"><i class="bi bi-compass-fill" aria-hidden="true"></i></div>
+                        <h2>Nuestra Misión</h2>
+                        <p>
+                            Fomentar la práctica del fútbol y la integración deportiva en Trujillo mediante canchas de grass sintético en óptimas condiciones, atención dedicada y un sistema de reservas transparente y puntual.
+                        </p>
+                    </div>
+                    <div class="mvv-card mvv-card--featured">
+                        <div class="mvv-icon"><i class="bi bi-eye-fill" aria-hidden="true"></i></div>
+                        <h2>Nuestra Visión</h2>
+                        <p>
+                            Ser un complejo deportivo referente en la ciudad de Trujillo por el mantenimiento de nuestro grass sintético, la puntualidad en los turnos de juego y el desarrollo de torneos locales.
+                        </p>
+                    </div>
+                    <div class="mvv-card">
+                        <div class="mvv-icon"><i class="bi bi-shield-check" aria-hidden="true"></i></div>
+                        <h2>Nuestros Valores</h2>
+                        <p>
+                            Juego limpio, puntualidad en el servicio, respeto entre deportistas y compromiso constante con el fomento del deporte formativo y recreativo.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. Nuestras Instalaciones Reales -->
+        <section class="nosotros-section">
+            <div class="container-fqs">
+                <div class="nosotros-section-header text-center">
+                    <span class="badge-sub">Instalaciones</span>
+                    <h2 class="section-heading">Canchas y Servicios</h2>
+                    <p class="section-subtitle">Características operativas y servicios reales disponibles en nuestro complejo.</p>
+                </div>
+
+                <div class="instalaciones-grid">
+                    <div class="instalacion-item">
+                        <div class="instalacion-icon"><i class="bi bi-grid-3x3-gap-fill" aria-hidden="true"></i></div>
+                        <div class="instalacion-body">
+                            <h3>10 Canchas Fijas</h3>
+                            <p>8 canchas para Fútbol 6 (NORMAL) y 2 canchas para Fútbol 7 (GRANDE) con grass sintético.</p>
+                        </div>
+                    </div>
+                    <div class="instalacion-item">
+                        <div class="instalacion-icon"><i class="bi bi-lightbulb-fill" aria-hidden="true"></i></div>
+                        <div class="instalacion-body">
+                            <h3>Iluminación Nocturna</h3>
+                            <p>Luminarias nocturnas para partidos de tarde y noche (+S/20 desde las 18:00 hrs).</p>
+                        </div>
+                    </div>
+                    <div class="instalacion-item">
+                        <div class="instalacion-icon"><i class="bi bi-trophy-fill" aria-hidden="true"></i></div>
+                        <div class="instalacion-body">
+                            <h3>Torneos y Copas</h3>
+                            <p>Organización de torneos y copas locales con inscripción abierta para equipos de la comunidad.</p>
+                        </div>
+                    </div>
+                    <div class="instalacion-item">
+                        <div class="instalacion-icon"><i class="bi bi-clock-fill" aria-hidden="true"></i></div>
+                        <div class="instalacion-body">
+                            <h3>Horario de Atención</h3>
+                            <p>Atención continua de lunes a domingo de 07:00 a 24:00 en la ciudad de Trujillo, Perú.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. Galería de Fachada / Entorno (Grid Responsive con altura controlada) -->
+        <section class="nosotros-section" style="background-color: #FFFFFF; border-top: 1px solid #E2E8F0;">
+            <div class="container-fqs">
+                <div class="nosotros-section-header text-center">
+                    <span class="badge-sub">Galería</span>
+                    <h2 class="section-heading">Conoce Nuestras Instalaciones</h2>
+                    <p class="section-subtitle">Fotografías de las instalaciones de Fredy Queen Soccer en Trujillo.</p>
+                </div>
+
+                <div class="galeria-grid">
+                    <div class="galeria-img-wrap">
+                        <img th:src="@{/images/business/facade-01.jpg}" alt="Fachada principal de Fredy Queen Soccer en Trujillo" loading="lazy">
+                    </div>
+                    <div class="galeria-img-wrap">
+                        <img th:src="@{/images/business/facade-02.jpg}" alt="Vista del complejo de canchas deportivas Fredy Queen Soccer" loading="lazy">
+                    </div>
+                    <div class="galeria-img-wrap">
+                        <img th:src="@{/images/business/facade-03.jpg}" alt="Acceso y canchas de grass sintético Fredy Queen Soccer" loading="lazy">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 6. CTA Final -->
+        <section class="section-cta-futbol py-5">
+            <div class="container-fqs text-center">
+                <div class="cta-content">
+                    <h2>¿Listo para jugar en Fredy Queen Soccer?</h2>
+                    <p>Revisa la disponibilidad de canchas en tiempo real o inscríbete en nuestros torneos.</p>
+                    <div class="cta-actions mt-3">
+                        <a th:href="@{/canchas}" class="btn btn-primary btn-cta-lg">
+                            Reservar Cancha <i class="bi bi-arrow-right" aria-hidden="true"></i>
+                        </a>
+                        <a th:href="@{/torneos}" class="btn btn-outline btn-cta-lg ms-2">
+                            Ver Torneos <i class="bi bi-trophy" aria-hidden="true"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <div th:replace="~{fragments/layout :: footer}"></div>
+    <script th:replace="~{fragments/layout :: navbar-js}"></script>
+
+</body>
+</html>

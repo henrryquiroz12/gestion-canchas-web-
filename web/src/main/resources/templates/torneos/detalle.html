@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${torneo.name} + ' - Fredy Queen Soccer'">Detalle del Torneo - Fredy Queen Soccer</title>
+    <link rel="icon" type="image/png" th:href="@{/img/favicon.png}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/global.css}">
+    <link rel="stylesheet" th:href="@{/css/public.css}">
+    <link rel="stylesheet" th:href="@{/css/torneos.css}">
+</head>
+<body class="torneos-page">
+
+    <!-- Skip Link WCAG -->
+    <a href="#main-content" class="skip-link">Saltar al contenido principal</a>
+
+    <!-- Navbar -->
+    <div th:replace="~{fragments/layout :: navbar}"></div>
+
+    <!-- Contenido Principal -->
+    <main id="main-content" class="torneos-page-content torneo-detail-page">
+        <div class="container-fqs">
+
+            <!-- Enlace Volver a Torneos Accesible -->
+            <div class="fqs-back-link-wrapper mb-3">
+                <a th:href="@{/torneos}" class="fqs-back-link">
+                    <span class="fqs-back-arrow" aria-hidden="true">&larr;</span> Volver a torneos
+                </a>
+            </div>
+
+            <!-- Alertas / Feedback -->
+            <div th:if="${exito}" class="fqs-alert fqs-alert--success mb-4" role="status" aria-live="polite">
+                <i class="bi bi-check-circle-fill" aria-hidden="true"></i>
+                <span th:text="${exito}">Mensaje de éxito</span>
+            </div>
+            <div th:if="${info}" class="fqs-alert fqs-alert--info mb-4" role="status" aria-live="polite">
+                <i class="bi bi-info-circle-fill" aria-hidden="true"></i>
+                <span th:text="${info}">Mensaje de información</span>
+            </div>
+            <div th:if="${error}" class="fqs-alert fqs-alert--danger mb-4" role="alert" aria-live="assertive">
+                <i class="bi bi-exclamation-triangle-fill" aria-hidden="true"></i>
+                <span th:text="${error}">Mensaje de error</span>
+            </div>
+
+            <!-- Layout 2/3 + 1/3 -->
+            <div class="torneo-detail-layout">
+
+                <!-- Columna 1: Información Detallada (2/3) -->
+                <div class="torneo-detail-main">
+                    <div class="torneo-detail-header mb-4">
+                        <div class="d-flex align-items-center gap-2 mb-2">
+                            <span th:if="${torneo.isFree()}" class="torneo-badge torneo-badge--free">
+                                <i class="bi bi-gift-fill" aria-hidden="true"></i> Gratuito
+                            </span>
+                            <span th:unless="${torneo.isFree()}" class="torneo-badge torneo-badge--paid">
+                                <i class="bi bi-trophy-fill" aria-hidden="true"></i> Oficial
+                            </span>
+                            <span th:if="${torneo.registrationsOpen}" class="badge-status-open">
+                                <i class="bi bi-door-open-fill" aria-hidden="true"></i> Inscripciones Abiertas
+                            </span>
+                            <span th:unless="${torneo.registrationsOpen}" class="badge-status-closed">
+                                <i class="bi bi-lock-fill" aria-hidden="true"></i> Inscripciones Cerradas
+                            </span>
+                        </div>
+                        <h1 class="torneo-main-title" th:text="${torneo.name}">Torneo de Bienvenida</h1>
+                        <p class="torneo-main-lead" th:text="${torneo.description}">Descripción detallada del torneo.</p>
+                    </div>
+
+                    <!-- Ficha Técnica -->
+                    <div class="torneo-specs-card mb-4">
+                        <h2 class="specs-title">Bases y Formato</h2>
+                        <div class="specs-grid">
+                            <div class="spec-item">
+                                <span class="spec-label">Formato de Juego</span>
+                                <strong class="spec-val" th:text="${torneo.format != null ? torneo.format : 'Fútbol 7'}">Fútbol 7</strong>
+                            </div>
+                            <div class="spec-item">
+                                <span class="spec-label">Precio de Inscripción</span>
+                                <strong class="spec-val" th:text="${torneo.isFree()} ? 'S/ 0.00 (Gratis)' : 'S/ ' + ${#numbers.formatDecimal(torneo.pricePerTeam, 1, 2)}">S/ 0.00</strong>
+                            </div>
+                            <div class="spec-item">
+                                <span class="spec-label">Cupos Máximos</span>
+                                <strong class="spec-val" th:text="${torneo.maxTeams != null ? torneo.maxTeams + ' equipos' : 'Por definir'}">Por definir</strong>
+                            </div>
+                            <div class="spec-item">
+                                <span class="spec-label">Sede Oficial</span>
+                                <strong class="spec-val">Fredy Queen Soccer (Trujillo)</strong>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Equipos Confirmados -->
+                    <div class="torneo-equipos-card">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h2 class="specs-title mb-0">Equipos Confirmados</h2>
+                            <span class="badge-counter" th:text="${totalConfirmados} + ' Registrados'">0 Registrados</span>
+                        </div>
+
+                        <div th:if="${#lists.isEmpty(equiposConfirmados)}" class="empty-equipos text-center py-4">
+                            <i class="bi bi-people display-4 text-muted" aria-hidden="true"></i>
+                            <p class="mt-2 mb-0 text-muted">Aún no hay equipos confirmados en este torneo. ¡Sé el primero en registrar a tu equipo!</p>
+                        </div>
+
+                        <ul th:unless="${#lists.isEmpty(equiposConfirmados)}" class="equipos-list" role="list">
+                            <li th:each="reg, iter : ${equiposConfirmados}" class="equipo-item" role="listitem">
+                                <span class="equipo-order" th:text="${iter.count}">1</span>
+                                <div class="equipo-info">
+                                    <strong class="equipo-name" th:text="${reg.teamName}">Nombre Equipo</strong>
+                                    <span class="equipo-date">Inscrito el <span th:text="${#temporals.format(reg.registrationDate, 'dd/MM/yyyy')}">18/10/2026</span></span>
+                                </div>
+                                <span class="badge-status-confirmed"><i class="bi bi-check-circle-fill" aria-hidden="true"></i> Confirmado</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Columna 2: Sticky Card de Inscripción (1/3) -->
+                <aside class="torneo-detail-aside" aria-label="Inscripción al torneo">
+                    <div class="sticky-inscripcion-card" id="inscribir-equipo">
+                        <div class="aside-price-header">
+                            <span class="aside-price-sub">Inversión por equipo</span>
+                            <div class="aside-price-main" th:if="${torneo.isFree()}">
+                                <span class="price-big text-success">S/ 0.00</span>
+                                <span class="price-desc">¡Totalmente Gratis!</span>
+                            </div>
+                            <div class="aside-price-main" th:unless="${torneo.isFree()}">
+                                <span class="price-big" th:text="'S/ ' + ${#numbers.formatDecimal(torneo.pricePerTeam, 1, 2)}">S/ 280.00</span>
+                                <span class="price-desc">Pago presencial en caja</span>
+                            </div>
+                        </div>
+
+                        <div class="aside-body">
+                            <!-- Caso 1: Inscripciones cerradas -->
+                            <div th:unless="${torneo.registrationsOpen}" class="text-center py-3">
+                                <i class="bi bi-lock-fill display-5 text-muted" aria-hidden="true"></i>
+                                <h3 class="h5 mt-2">Inscripciones Cerradas</h3>
+                                <p class="text-muted small">Este torneo ya no recibe nuevas inscripciones por cierre de cupos o fecha.</p>
+                            </div>
+
+                            <!-- Caso 2: Inscripciones abiertas -->
+                            <div th:if="${torneo.registrationsOpen}">
+                                <!-- Subcaso A: Usuario Anónimo -->
+                                <div sec:authorize="isAnonymous()" class="text-center py-3">
+                                    <p class="small text-muted mb-3">Para inscribir a tu equipo debes identificarte con tu cuenta de cliente.</p>
+                                    <a th:href="@{/login}" class="btn btn-primary w-100 mb-2">
+                                        <i class="bi bi-box-arrow-in-right" aria-hidden="true"></i> Iniciar sesión para inscribirte
+                                    </a>
+                                    <a th:href="@{/registro}" class="btn btn-outline w-100 small">
+                                        ¿No tienes cuenta? Crear cuenta
+                                    </a>
+                                </div>
+
+                                <!-- Subcaso B: Cliente ya registrado en este torneo -->
+                                <div sec:authorize="hasRole('CLIENTE')" th:if="${miInscripcion != null}" class="mi-inscripcion-box">
+                                    <span class="badge-mi-equipo">Tu equipo inscrito</span>
+                                    <h3 class="my-2" th:text="${miInscripcion.teamName}">Mi Equipo F.C.</h3>
+                                    
+                                    <div th:if="${miInscripcion.status.name() == 'CONFIRMADA'}" class="status-msg status-msg--confirmed">
+                                        <i class="bi bi-check-circle-fill" aria-hidden="true"></i>
+                                        <span>¡Tu equipo está confirmado en el torneo!</span>
+                                    </div>
+                                    <div th:if="${miInscripcion.status.name() == 'PENDIENTE_PAGO'}" class="status-msg status-msg--pending">
+                                        <i class="bi bi-clock-history" aria-hidden="true"></i>
+                                        <span>Inscripción registrada. Acércate a administración para validar tu abono de S/ <span th:text="${#numbers.formatDecimal(miInscripcion.appliedAmount, 1, 2)}">280.00</span>.</span>
+                                    </div>
+                                    <div th:if="${miInscripcion.status.name() == 'CANCELADA'}" class="status-msg status-msg--cancelled">
+                                        <i class="bi bi-x-circle-fill" aria-hidden="true"></i>
+                                        <span>Tu inscripción fue cancelada.</span>
+                                    </div>
+                                </div>
+
+                                <!-- Subcaso C: Cliente autenticado NO registrado aún -->
+                                <div sec:authorize="hasRole('CLIENTE')" th:if="${miInscripcion == null}">
+                                    <h3 class="h5 mb-3">Inscribe a tu equipo</h3>
+                                    <form th:action="@{'/torneos/' + ${torneo.slug} + '/inscribirse'}" method="post">
+                                        <div class="mb-3">
+                                            <label for="nombreEquipo" class="form-label">Nombre del Equipo *</label>
+                                            <input type="text" class="form-control" id="nombreEquipo" name="nombreEquipo" required minlength="2" maxlength="60" placeholder="Ej. Los Amigos F.C.">
+                                            <div class="form-text">Debe ser único en este torneo (2 a 60 caracteres).</div>
+                                        </div>
+
+                                        <button type="submit" class="btn btn-primary w-100">
+                                            <i class="bi bi-check2-circle" aria-hidden="true"></i> Confirmar inscripción
+                                        </button>
+                                    </form>
+                                </div>
+
+                                <!-- Subcaso D: ADMIN autenticado -->
+                                <div sec:authorize="hasRole('ADMIN')" class="text-center py-3">
+                                    <p class="small text-muted mb-3">Estás conectado como Administrador. Los administradores gestionan las inscripciones desde el panel de control.</p>
+                                    <a th:href="@{/admin/torneos}" class="btn btn-primary w-100">
+                                        <i class="bi bi-gear-fill" aria-hidden="true"></i> Gestionar Torneos
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="aside-footer text-center p-3 bg-light border-top">
+                            <small class="text-muted"><i class="bi bi-shield-check" aria-hidden="true"></i> Fredy Queen Soccer &middot; Torneos Oficiales</small>
+                        </div>
+                    </div>
+                </aside>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <div th:replace="~{fragments/layout :: footer}"></div>
+    <script th:replace="~{fragments/layout :: navbar-js}"></script>
+
+</body>
+</html>

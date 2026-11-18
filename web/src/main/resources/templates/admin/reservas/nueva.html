@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/header :: head-dashboard}"></head>
+<body class="dashboard-body">
+    <div th:replace="~{fragments/layout :: navbar}"></div>
+    <main class="dashboard-main">
+        <div class="dashboard-topbar">
+            <div class="dashboard-topbar-text">
+                <h1>Nueva Reserva Presencial</h1>
+                <p>Crear reserva operativa asignada a un cliente mediante búsqueda de DNI</p>
+            </div>
+        </div>
+
+        <div th:if="${mensajeExito}" class="alert-toast alert-toast--success">
+            <i class="bi bi-check-circle"></i>
+            <span th:text="${mensajeExito}"></span>
+        </div>
+        <div th:if="${mensajeError}" class="alert-toast alert-toast--error">
+            <i class="bi bi-exclamation-triangle"></i>
+            <span th:text="${mensajeError}"></span>
+        </div>
+
+        <section class="dashboard-section active">
+            <div class="row">
+                <div class="col-md-9 mx-auto">
+                    <div class="analytics-card">
+                        <form id="formReservaAdmin" action="/admin/reservas" method="post">
+                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                            
+                            <!-- 1. Búsqueda de Cliente por DNI -->
+                            <div class="border-bottom pb-4 mb-4">
+                                <h5 class="fw-bold text-dark mb-3">
+                                    <span class="badge bg-dark rounded-circle me-1" style="width: 24px; height: 24px; display: inline-flex; align-items: center; justify-content: center; font-size: 0.8rem;">1</span>
+                                    Localizar Cliente por DNI
+                                </h5>
+                                
+                                <div class="row g-2 align-items-center">
+                                    <div class="col-sm-6">
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-light text-muted"><i class="bi bi-person-vcard"></i></span>
+                                            <input type="text" id="inputBuscarDni" class="form-control" placeholder="DNI del cliente (8 dígitos)" maxlength="8" oninput="this.value=this.value.replace(/[^0-9]/g,'').slice(0,8);" autocomplete="off">
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <button type="button" class="btn btn-outline-success w-100 fw-bold" id="btnBuscarCliente">
+                                            <i class="bi bi-search me-1"></i> Buscar
+                                        </button>
+                                    </div>
+                                    <div class="col-sm-3 text-sm-end">
+                                        <a th:href="@{/admin/clientes}" target="_blank" class="small text-muted text-decoration-none">
+                                            <i class="bi bi-person-plus me-1"></i> Registrar cliente
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <div id="feedbackDni" class="mt-2"></div>
+
+                                <!-- Tarjeta de resultado del cliente seleccionado -->
+                                <div id="boxClienteSeleccionado" class="mt-3 p-3 rounded-3 border bg-light d-none">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <div>
+                                            <span class="badge bg-success mb-1"><i class="bi bi-check-circle-fill me-1"></i> Cliente Seleccionado</span>
+                                            <h6 class="fw-bold mb-1 text-dark" id="displayClienteNombre">Juan Perez</h6>
+                                            <p class="small text-muted mb-0">
+                                                <strong>DNI:</strong> <span id="displayClienteDni">12345678</span> &nbsp;|&nbsp; 
+                                                <strong>Email:</strong> <span id="displayClienteEmail">juan@correo.com</span>
+                                            </p>
+                                        </div>
+                                        <button type="button" class="btn btn-sm btn-link text-danger p-0" id="btnLimpiarCliente" title="Cambiar cliente">
+                                            <i class="bi bi-x-circle"></i> Cambiar
+                                        </button>
+                                    </div>
+                                </div>
+                                <input type="hidden" id="inputClienteId" name="clienteId" required>
+                            </div>
+
+                            <!-- 2. Cancha y Fecha -->
+                            <div class="border-bottom pb-4 mb-4">
+                                <h5 class="fw-bold text-dark mb-3">
+                                    <span class="badge bg-dark rounded-circle me-1" style="width: 24px; height: 24px; display: inline-flex; align-items: center; justify-content: center; font-size: 0.8rem;">2</span>
+                                    Cancha y Fecha
+                                </h5>
+                                <div class="row g-3">
+                                    <div class="col-sm-6">
+                                        <label class="form-label small fw-bold text-muted">Cancha deportiva</label>
+                                        <select id="selectCancha" name="canchaId" class="form-select" required>
+                                            <option value="" disabled selected>Selecciona una cancha...</option>
+                                            <option th:each="cancha : ${canchas}" th:value="${cancha.id}" th:text="${cancha.nombre} + ' (' + ${cancha.tipo} + ') - S/ ' + ${cancha.precioHora}"></option>
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <label class="form-label small fw-bold text-muted">Fecha de Reserva</label>
+                                        <input type="date" id="inputFecha" name="fechaAlquiler" class="form-control" required th:min="${#temporals.format(#temporals.createNow(), 'yyyy-MM-dd')}">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 3. Horarios Disponibles (Slots) -->
+                            <div class="border-bottom pb-4 mb-4">
+                                <h5 class="fw-bold text-dark mb-2">
+                                    <span class="badge bg-dark rounded-circle me-1" style="width: 24px; height: 24px; display: inline-flex; align-items: center; justify-content: center; font-size: 0.8rem;">3</span>
+                                    Horario Disponible (Turnos de 60 min)
+                                </h5>
+                                <p class="text-muted small mb-3">Seleccione el turno deseado. Los precios incluyen recargo nocturno cuando aplique.</p>
+                                
+                                <div id="slotsContainer" class="d-flex flex-wrap gap-2 py-2">
+                                    <span class="text-muted small fst-italic">Selecciona primero la cancha y la fecha para consultar los turnos disponibles.</span>
+                                </div>
+                                <input type="hidden" id="inputHoraInicio" name="horaInicio" required>
+                            </div>
+
+                            <!-- 4. Método de Pago -->
+                            <div class="mb-4">
+                                <h5 class="fw-bold text-dark mb-3">
+                                    <span class="badge bg-dark rounded-circle me-1" style="width: 24px; height: 24px; display: inline-flex; align-items: center; justify-content: center; font-size: 0.8rem;">4</span>
+                                    Método de Pago
+                                </h5>
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <select name="metodoPago" class="form-select" required>
+                                            <option value="EFECTIVO" selected>EFECTIVO (Pago en caja)</option>
+                                            <option value="YAPE">YAPE</option>
+                                            <option value="PLIN">PLIN</option>
+                                            <option value="TARJETA">TARJETA</option>
+                                            <option value="TRANSFERENCIA">TRANSFERENCIA</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="d-grid gap-2 pt-2">
+                                <button type="submit" class="btn btn-primary btn-primary-custom py-2 fw-bold fs-6" id="btnGuardarReserva">
+                                    <i class="bi bi-calendar-check me-2"></i> Crear Reserva Presencial
+                                </button>
+                                <a th:href="@{/admin/reservas}" class="btn btn-light border py-2 text-muted">Cancelar y volver</a>
+                            </div>
+                            <div id="reservaMensaje" class="mt-3"></div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer th:replace="~{fragments/layout :: footer}"></footer>
+    <div th:replace="~{fragments/footer :: scripts}"></div>
+
+    <style>
+        .slot-card {
+            background: #FFFFFF;
+            border: 1.5px solid #E2E8F0;
+            border-radius: 8px;
+            padding: 0.65rem 0.95rem;
+            cursor: pointer;
+            transition: all 0.15s ease-in-out;
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-width: 135px;
+            text-align: center;
+            color: #0F172A;
+            user-select: none;
+            outline: none;
+        }
+        .slot-card:hover:not(.disabled) {
+            border-color: #10B981;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.12);
+            transform: translateY(-1px);
+        }
+        .slot-card.selected {
+            background: #10B981 !important;
+            border-color: #10B981 !important;
+            color: #FFFFFF !important;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.28);
+        }
+        .slot-card.selected .slot-time,
+        .slot-card.selected .slot-price,
+        .slot-card.selected .slot-badge {
+            color: #FFFFFF !important;
+        }
+        .slot-card.disabled {
+            background: #F8FAFC;
+            border-color: #E2E8F0;
+            color: #94A3B8;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+        .slot-time {
+            font-weight: 700;
+            font-size: 0.92rem;
+            color: #0F172A;
+        }
+        .slot-price {
+            font-weight: 600;
+            font-size: 0.82rem;
+            margin-top: 0.2rem;
+        }
+        .slot-badge {
+            font-size: 0.68rem;
+            font-weight: 500;
+            margin-top: 0.25rem;
+            padding: 0.1rem 0.45rem;
+            border-radius: 4px;
+            background: #F1F5F9;
+            color: #475569;
+        }
+        .slot-card.selected .slot-badge {
+            background: rgba(255, 255, 255, 0.25);
+            color: #FFFFFF;
+        }
+    </style>
+
+    <script>
+        // 1. Búsqueda de Cliente por DNI
+        const inputBuscarDni = document.getElementById('inputBuscarDni');
+        const btnBuscarCliente = document.getElementById('btnBuscarCliente');
+        const feedbackDni = document.getElementById('feedbackDni');
+        const boxClienteSeleccionado = document.getElementById('boxClienteSeleccionado');
+        const inputClienteId = document.getElementById('inputClienteId');
+        const btnLimpiarCliente = document.getElementById('btnLimpiarCliente');
+
+        async function buscarCliente() {
+            const dni = inputBuscarDni.value.trim();
+            feedbackDni.innerHTML = '';
+
+            if (dni.length !== 8) {
+                feedbackDni.innerHTML = '<div class="alert alert-warning py-2 px-3 small mb-0">El DNI debe contener exactamente 8 dígitos.</div>';
+                return;
+            }
+
+            btnBuscarCliente.disabled = true;
+            btnBuscarCliente.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Buscando...';
+
+            try {
+                const response = await fetch(`/admin/api/clientes/buscar?dni=${dni}`);
+                const data = await response.json();
+
+                if (!response.ok) {
+                    feedbackDni.innerHTML = `<div class="alert alert-danger py-2 px-3 small mb-0 d-flex justify-content-between align-items-center">
+                        <span>${data.mensaje || 'No se encontró un cliente registrado con ese DNI.'}</span>
+                        <a href="/admin/clientes" target="_blank" class="fw-bold text-danger text-decoration-underline ms-2">Registrar cliente</a>
+                    </div>`;
+                    inputClienteId.value = '';
+                    boxClienteSeleccionado.classList.add('d-none');
+                } else {
+                    inputClienteId.value = data.id;
+                    document.getElementById('displayClienteNombre').textContent = data.nombreCompleto;
+                    document.getElementById('displayClienteDni').textContent = data.dni || dni;
+                    document.getElementById('displayClienteEmail').textContent = data.email || 'Sin correo';
+                    boxClienteSeleccionado.classList.remove('d-none');
+                    feedbackDni.innerHTML = '';
+                }
+            } catch (err) {
+                feedbackDni.innerHTML = '<div class="alert alert-danger py-2 px-3 small mb-0">Error de conexión al consultar cliente.</div>';
+            } finally {
+                btnBuscarCliente.disabled = false;
+                btnBuscarCliente.innerHTML = '<i class="bi bi-search me-1"></i> Buscar';
+            }
+        }
+
+        btnBuscarCliente.addEventListener('click', buscarCliente);
+        inputBuscarDni.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                buscarCliente();
+            }
+        });
+
+        btnLimpiarCliente.addEventListener('click', () => {
+            inputClienteId.value = '';
+            inputBuscarDni.value = '';
+            boxClienteSeleccionado.classList.add('d-none');
+            feedbackDni.innerHTML = '';
+            inputBuscarDni.focus();
+        });
+
+        // 2. Cancha y Horarios (Slots)
+        const selectCancha = document.getElementById('selectCancha');
+        const inputFecha = document.getElementById('inputFecha');
+        const slotsContainer = document.getElementById('slotsContainer');
+        const inputHoraInicio = document.getElementById('inputHoraInicio');
+
+        async function loadSlots() {
+            const canchaId = selectCancha.value;
+            const fecha = inputFecha.value;
+
+            if (!canchaId || !fecha) return;
+
+            slotsContainer.innerHTML = '<span class="text-muted small"><span class="spinner-border spinner-border-sm me-1"></span> Consultando turnos...</span>';
+            inputHoraInicio.value = '';
+
+            try {
+                const response = await fetch(`/api/disponibilidad/slots?canchaId=${canchaId}&fecha=${fecha}`);
+                if (!response.ok) throw new Error('Error al cargar disponibilidad');
+
+                const slots = await response.json();
+
+                if (slots.length === 0) {
+                    slotsContainer.innerHTML = '<span class="text-muted small fst-italic">No hay horarios operativos configurados para esta fecha.</span>';
+                    return;
+                }
+
+                slotsContainer.innerHTML = '';
+                slots.forEach(slot => {
+                    const card = document.createElement('div');
+                    card.className = 'slot-card';
+
+                    // Formatear hora sin segundos: "07:00 - 08:00"
+                    const horaIni = (slot.horaInicio || '').substring(0, 5);
+                    const horaFin = (slot.horaFin || '').substring(0, 5);
+                    const rangoTexto = `${horaIni} - ${horaFin}`;
+
+                    if (slot.estado === 'DISPONIBLE') {
+                        let html = `<div class="slot-time">${rangoTexto}</div>`;
+                        html += `<div class="slot-price text-dark">S/ ${parseFloat(slot.precioTotal).toFixed(2)}</div>`;
+                        if (slot.recargoIluminacion > 0) {
+                            html += `<div class="slot-badge">+ S/ ${parseFloat(slot.recargoIluminacion).toFixed(2)} iluminación</div>`;
+                        } else {
+                            html += `<div class="slot-badge">Disponible</div>`;
+                        }
+                        card.innerHTML = html;
+
+                        card.onclick = function() {
+                            document.querySelectorAll('#slotsContainer .slot-card').forEach(c => c.classList.remove('selected'));
+                            card.classList.add('selected');
+                            inputHoraInicio.value = horaIni;
+                        };
+                    } else if (slot.estado === 'OCUPADO' || slot.estado === 'RESERVADO') {
+                        card.classList.add('disabled');
+                        card.innerHTML = `<div class="slot-time text-muted">${rangoTexto}</div>
+                                          <div class="slot-price text-muted">S/ ${parseFloat(slot.precioTotal).toFixed(2)}</div>
+                                          <div class="slot-badge text-danger" style="background:#FEE2E2;">Ocupado</div>`;
+                    } else {
+                        card.classList.add('disabled');
+                        card.innerHTML = `<div class="slot-time text-muted">${rangoTexto}</div>
+                                          <div class="slot-price text-muted">-</div>
+                                          <div class="slot-badge text-secondary" style="background:#F1F5F9;">Bloqueado</div>`;
+                    }
+                    slotsContainer.appendChild(card);
+                });
+            } catch (e) {
+                slotsContainer.innerHTML = '<span class="text-danger small">Error: ' + e.message + '</span>';
+            }
+        }
+
+        selectCancha.addEventListener('change', loadSlots);
+        inputFecha.addEventListener('change', loadSlots);
+
+        // Envío del Formulario
+        const formReserva = document.getElementById('formReservaAdmin');
+        formReserva.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const msgContainer = document.getElementById('reservaMensaje');
+            msgContainer.innerHTML = '';
+
+            if (!inputClienteId.value) {
+                msgContainer.innerHTML = '<div class="alert alert-warning py-2">Debe buscar y seleccionar un cliente por DNI antes de crear la reserva.</div>';
+                inputBuscarDni.focus();
+                return;
+            }
+            if (!inputHoraInicio.value) {
+                msgContainer.innerHTML = '<div class="alert alert-warning py-2">Debe seleccionar un turno disponible.</div>';
+                return;
+            }
+
+            const formData = new FormData(formReserva);
+            const btn = document.getElementById('btnGuardarReserva');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Creando reserva...';
+
+            try {
+                const response = await fetch(formReserva.action, {
+                    method: 'POST',
+                    body: formData
+                });
+                const result = await response.json();
+
+                if (response.ok) {
+                    window.location.href = '/admin/reservas?mensajeExito=Reserva+creada+correctamente';
+                } else {
+                    let errHtml = '';
+                    for (const [key, msg] of Object.entries(result)) {
+                        errHtml += `<div>${msg}</div>`;
+                    }
+                    msgContainer.innerHTML = `<div class="alert alert-danger">${errHtml}</div>`;
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="bi bi-calendar-check me-2"></i> Crear Reserva Presencial';
+                }
+            } catch (err) {
+                msgContainer.innerHTML = `<div class="alert alert-danger">Error de conexión al crear la reserva.</div>`;
+                btn.disabled = false;
+                btn.innerHTML = '<i class="bi bi-calendar-check me-2"></i> Crear Reserva Presencial';
+            }
+        });
+    </script>
+</body>
+</html>

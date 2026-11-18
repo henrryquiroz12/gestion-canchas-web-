@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/header :: head-dashboard}"></head>
+<body class="dashboard-body">
+    <div th:replace="~{fragments/layout :: navbar}"></div>
+    <main class="dashboard-main">
+        <div class="dashboard-topbar">
+            <div class="dashboard-topbar-text">
+                <h1>Reservas</h1>
+                <p>Gestión operativa de reservas y alquileres</p>
+            </div>
+            <div>
+                <form id="clientSearchForm" class="d-flex gap-2 flex-wrap" novalidate
+                      th:data-search-url="@{/admin/reservas/buscar}"
+                      data-result-type="reservations" th:data-details-url="@{/admin/reservas}">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                    <div>
+                        <label for="clientSearchCriterion" class="form-label">Buscar por</label>
+                        <select id="clientSearchCriterion" class="form-control">
+                            <option value="DNI">DNI</option>
+                            <option value="NOMBRE">Nombre</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="clientSearchValue" class="form-label">DNI o nombre</label>
+                        <input type="text" id="clientSearchValue" class="form-control" maxlength="8"
+                               inputmode="numeric" autocomplete="off" aria-describedby="clientSearchError clientSearchStatus"
+                               placeholder="Escribe de 1 a 8 dígitos">
+                        <span id="clientSearchError" class="text-danger small d-block" role="alert"></span>
+                    </div>
+                    <button type="button" id="clearClientSearch" class="btn btn-sm btn-outline-secondary align-self-end">Limpiar</button>
+                </form>
+            </div>
+        </div>
+
+        <div th:if="${mensajeExito}" class="alert-toast alert-toast--success">
+            <i class="bi bi-check-circle"></i>
+            <span th:text="${mensajeExito}"></span>
+        </div>
+        <div th:if="${mensajeError}" class="alert-toast alert-toast--error">
+            <i class="bi bi-exclamation-triangle"></i>
+            <span th:text="${mensajeError}"></span>
+        </div>
+
+        <section class="dashboard-section active">
+            <div class="section-header">
+                <h2>Listado de Reservas</h2>
+                <a th:href="@{/admin/reservas/nueva}" class="btn btn-primary btn-primary-custom">
+                    <i class="bi bi-plus-lg"></i> Reserva Presencial
+                </a>
+            </div>
+            
+            <div class="table-wrapper">
+                <div class="table-responsive">
+                    <table class="table-custom">
+                        <thead>
+                            <tr>
+                                <th>Cód. / ID</th>
+                                <th>Cliente</th>
+                                <th>Cancha</th>
+                                <th>Fecha</th>
+                                <th>Horario</th>
+                                <th>Monto</th>
+                                <th>Estado</th>
+                                <th>Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody id="clientSearchResults"></tbody>
+                    </table>
+                </div>
+
+                <p id="clientSearchStatus" class="text-muted small p-3" role="status" aria-live="polite">Escribe un DNI o nombre del cliente para buscar sus reservas.</p>
+            </div>
+        </section>
+    </main>
+
+    <footer th:replace="~{fragments/layout :: footer}"></footer>
+    <div th:replace="~{fragments/footer :: scripts}"></div>
+    <script th:src="@{/js/admin/clientes.js}"></script>
+</body>
+</html>

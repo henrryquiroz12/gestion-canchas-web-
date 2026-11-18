@@ -1,0 +1,822 @@
+/* public.css - Estilos inspirados en estética deportiva CanchasGO para Fredy Queen Soccer */
+
+.container-fqs {
+    width: min(calc(100% - 2 * clamp(16px, 3vw, 56px)), var(--fqs-container-wide, 1680px));
+    max-width: var(--fqs-container-wide, 1680px);
+    margin: 0 auto;
+    padding: 0 clamp(16px, 2vw, 32px);
+}
+
+/* ========================================================
+   1. HERO SECTION (INSPIRADO EN CANCHASGO)
+   ======================================================== */
+.hero-fqs,
+.hero-futbol {
+    background: radial-gradient(circle at 80% 20%, #152238 0%, #080E1E 70%);
+    color: #FFFFFF;
+    padding: 4.5rem 0 3.5rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-fqs::before,
+.hero-futbol::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(rgba(16, 185, 129, 0.08) 1px, transparent 1px);
+    background-size: 32px 32px;
+    pointer-events: none;
+}
+
+.hero-container,
+.hero-grid {
+    width: min(calc(100% - 2 * clamp(16px, 3vw, 56px)), var(--fqs-container-wide, 1680px));
+    max-width: var(--fqs-container-wide, 1680px);
+    margin: 0 auto;
+    padding: 0 clamp(16px, 2vw, 32px);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: clamp(40px, 4vw, 64px);
+    position: relative;
+    z-index: 1;
+}
+
+.hero-content {
+    flex: 0 0 45%;
+    max-width: 660px;
+}
+
+.hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(16, 185, 129, 0.12);
+    border: 1px solid rgba(16, 185, 129, 0.35);
+    color: var(--fqs-primary);
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+}
+
+.hero-badge-dot {
+    width: 8px;
+    height: 8px;
+    background-color: var(--fqs-primary);
+    border-radius: 50%;
+    display: inline-block;
+    box-shadow: 0 0 8px var(--fqs-primary);
+}
+
+.hero-title {
+    font-size: clamp(2.8rem, 4vw, 4.2rem);
+    font-weight: 900;
+    line-height: 1.05;
+    letter-spacing: -1.5px;
+    margin-bottom: 1.5rem;
+    color: #FFFFFF;
+}
+
+.hero-title span {
+    color: var(--fqs-primary);
+}
+
+.hero-subtitle {
+    font-size: 1.15rem;
+    color: #94A3B8;
+    line-height: 1.6;
+    margin-bottom: 2.2rem;
+}
+
+.hero-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.hero-btn-main {
+    padding: 12px 28px;
+    font-size: 1rem;
+    border-radius: 24px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.hero-btn-sec {
+    padding: 12px 24px;
+    font-size: 1rem;
+    border-radius: 24px;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    color: #FFFFFF;
+}
+
+.hero-btn-sec:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #FFFFFF !important;
+}
+
+/* ========================================================
+   CARRUSEL REAL DE FACHADA (HERO DERECHA)
+   ======================================================== */
+.hero-carousel-wrapper {
+    flex: 0 0 52%;
+    max-width: 760px;
+    width: 100%;
+}
+
+.hero-carousel {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.08);
+    background-color: #0F172A;
+}
+
+.hero-carousel-badge {
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    z-index: 5;
+    background: rgba(15, 23, 42, 0.75);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    color: #FFFFFF;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    pointer-events: none;
+}
+
+.hero-carousel-badge i {
+    color: var(--fqs-primary);
+}
+
+.hero-carousel-track {
+    display: flex;
+    height: 100%;
+    width: 100%;
+    transform: translateX(0);
+    transition: transform 700ms cubic-bezier(0.25, 1, 0.5, 1);
+    will-change: transform;
+}
+
+.hero-carousel-slide {
+    flex: 0 0 100%;
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+.hero-carousel-slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    user-select: none;
+    -webkit-user-drag: none;
+}
+
+/* Controles Flechas Prev / Next Discretos */
+
+/* Botón de Pausa / Reanudación Accesible en esquina superior derecha */
+.hero-carousel-toggle {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    z-index: 6;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(15, 23, 42, 0.65);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    color: #FFFFFF;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.hero-carousel-toggle:hover {
+    background: var(--fqs-primary);
+    border-color: var(--fqs-primary);
+    transform: scale(1.08);
+}
+
+.hero-carousel-toggle:focus-visible {
+    outline: 2px solid var(--fqs-primary);
+    outline-offset: 2px;
+}
+.hero-carousel-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 6;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #FFFFFF;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    padding: 0;
+    opacity: 0.85;
+}
+
+.hero-carousel-btn:hover {
+    background: var(--fqs-primary);
+    border-color: var(--fqs-primary);
+    color: #FFFFFF;
+    opacity: 1;
+    transform: translateY(-50%) scale(1.08);
+}
+
+.hero-carousel-prev {
+    left: 14px;
+}
+
+.hero-carousel-next {
+    right: 14px;
+}
+
+/* Indicadores / Puntos Inferiores */
+.hero-carousel-dots {
+    position: absolute;
+    bottom: 14px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 6;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(15, 23, 42, 0.55);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    padding: 6px 12px;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.hero-carousel-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(255, 255, 255, 0.4);
+    cursor: pointer;
+    padding: 0;
+    transition: all 0.25s ease;
+}
+
+.hero-carousel-dot:hover {
+    background: rgba(255, 255, 255, 0.85);
+}
+
+.hero-carousel-dot.active {
+    background: var(--fqs-primary);
+    width: 22px;
+    border-radius: 10px;
+}
+
+/* Barra de confianza */
+.hero-trust-bar {
+    width: min(calc(100% - 2 * clamp(16px, 3vw, 56px)), var(--fqs-container-wide, 1680px));
+    max-width: var(--fqs-container-wide, 1680px);
+    margin: 3.5rem auto 0;
+    padding: 1.25rem clamp(16px, 2vw, 32px) 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+}
+
+.trust-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9rem;
+    color: #94A3B8;
+    font-weight: 500;
+}
+
+.trust-item i {
+    color: var(--fqs-primary);
+    font-size: 1.1rem;
+}
+
+/* ========================================================
+   2. NUESTRA HISTORIA
+   ======================================================== */
+.section-historia {
+    padding: 5rem 0;
+    background-color: var(--fqs-background);
+}
+
+.historia-card {
+    background: var(--fqs-surface);
+    border: 1px solid var(--fqs-border);
+    border-radius: var(--border-radius-lg);
+    padding: 3.5rem;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+    max-width: 900px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.historia-badge {
+    display: inline-block;
+    color: var(--fqs-primary);
+    font-weight: 700;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 0.5rem;
+}
+
+.historia-lead {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--fqs-navy);
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+}
+
+.historia-text {
+    font-size: 1.05rem;
+    color: var(--fqs-text-muted);
+    line-height: 1.8;
+}
+
+/* ========================================================
+   3. CÓMO RESERVAR (4 PASOS)
+   ======================================================== */
+.section-pasos {
+    padding: 5rem 0;
+    background-color: #FFFFFF;
+    border-top: 1px solid var(--fqs-border);
+    border-bottom: 1px solid var(--fqs-border);
+}
+
+.badge-sub {
+    color: var(--fqs-primary);
+    font-weight: 700;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    display: inline-block;
+    margin-bottom: 0.5rem;
+}
+
+.section-heading {
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: var(--fqs-navy);
+    letter-spacing: -0.5px;
+    margin-bottom: 0.5rem;
+}
+
+.section-subtitle {
+    font-size: 1.05rem;
+    color: var(--fqs-text-muted);
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.pasos-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+    margin-top: 3.5rem;
+}
+
+.paso-card {
+    background: var(--fqs-background);
+    border: 1px solid var(--fqs-border);
+    border-radius: var(--border-radius-lg);
+    padding: 2rem 1.5rem;
+    position: relative;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.paso-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+    border-color: rgba(16, 185, 129, 0.4);
+}
+
+.paso-number {
+    position: absolute;
+    top: 1.25rem;
+    right: 1.25rem;
+    width: 32px;
+    height: 32px;
+    background: rgba(16, 185, 129, 0.15);
+    color: var(--fqs-primary);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 0.9rem;
+}
+
+.paso-icon {
+    font-size: 2rem;
+    color: var(--fqs-primary);
+    margin-bottom: 1rem;
+}
+
+.paso-card h3 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--fqs-navy);
+    margin-bottom: 0.75rem;
+}
+
+.paso-card p {
+    font-size: 0.92rem;
+    color: var(--fqs-text-muted);
+    line-height: 1.55;
+    margin: 0;
+}
+
+/* ========================================================
+   4. TARIFAS E INSTALACIONES
+   ======================================================== */
+.section-tarifas {
+    padding: 5rem 0;
+    background-color: var(--fqs-background);
+}
+
+.tarifas-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+    margin-top: 3.5rem;
+}
+
+.tarifa-card {
+    background: var(--fqs-surface);
+    border: 1px solid var(--fqs-border);
+    border-radius: var(--border-radius-lg);
+    padding: 2.5rem 2rem;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.tarifa-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.07);
+}
+
+.tarifa-card--featured {
+    border: 2px solid var(--fqs-primary);
+    box-shadow: 0 8px 24px rgba(16, 185, 129, 0.15);
+}
+
+.tarifa-badge-pop {
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--fqs-primary);
+    color: white;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    padding: 4px 14px;
+    border-radius: 20px;
+    letter-spacing: 0.5px;
+}
+
+.tarifa-tag {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--fqs-text-muted);
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+}
+
+.tarifa-card h3 {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--fqs-navy);
+    margin-bottom: 0.25rem;
+}
+
+.tarifa-sub {
+    font-size: 0.9rem;
+    color: var(--fqs-text-muted);
+    margin-bottom: 1.5rem;
+}
+
+.tarifa-price {
+    margin-bottom: 1.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--fqs-border);
+}
+
+.tarifa-price span {
+    font-size: 0.9rem;
+    color: var(--fqs-text-muted);
+    display: block;
+}
+
+.tarifa-price strong {
+    font-size: 2.4rem;
+    font-weight: 900;
+    color: var(--fqs-navy);
+}
+
+.tarifa-price small {
+    font-size: 0.9rem;
+    color: var(--fqs-text-muted);
+    font-weight: normal;
+}
+
+.tarifa-features {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 2rem;
+    flex: 1;
+}
+
+.tarifa-features li {
+    font-size: 0.92rem;
+    color: var(--fqs-text);
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.tarifa-features li i {
+    color: var(--fqs-primary);
+    font-size: 1.1rem;
+}
+
+/* ========================================================
+   5. CTA CON HERO-FUTBOL (SECUNDARIO EMOCIONAL)
+   ======================================================== */
+.section-cta-futbol {
+    position: relative;
+    background-color: #0B132B;
+    background-image: linear-gradient(135deg, rgba(11, 19, 43, 0.92) 0%, rgba(15, 23, 42, 0.88) 60%, rgba(16, 185, 129, 0.28) 100%), url('../img/hero-futbol.jpg');
+    background-position: center center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    padding: 5.5rem 0;
+    color: #FFFFFF;
+    text-align: center;
+    overflow: hidden;
+}
+
+.section-cta-futbol .cta-content {
+    max-width: 680px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 2;
+}
+
+.section-cta-futbol h2 {
+    font-size: 2.5rem;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    margin-bottom: 1rem;
+    color: #FFFFFF;
+}
+
+.section-cta-futbol p {
+    font-size: 1.15rem;
+    color: #E2E8F0;
+    line-height: 1.6;
+    max-width: 620px;
+    margin: 0 auto 2.2rem;
+}
+
+.section-cta-futbol .btn-cta-lg {
+    padding: 14px 34px;
+    font-size: 1.05rem;
+    border-radius: 26px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 4px 20px rgba(16, 185, 129, 0.45);
+}
+
+/* Responsive */
+/* Botón de Pausa / Reanudación Accesible en esquina superior derecha */
+.hero-carousel-toggle {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    z-index: 10;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(15, 23, 42, 0.7);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: #FFFFFF;
+    font-size: 1.1rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    transition: all 0.2s ease;
+    padding: 0;
+}
+
+.hero-carousel-toggle:hover {
+    background: var(--fqs-primary);
+    border-color: var(--fqs-primary);
+    transform: scale(1.08);
+}
+
+.hero-carousel-toggle:focus-visible {
+    outline: 2px solid var(--fqs-primary);
+    outline-offset: 2px;
+}
+
+@media (max-width: 992px) {
+    .hero-container,
+    .hero-grid {
+        flex-direction: column;
+        text-align: center;
+        gap: 2rem;
+    }
+    .hero-content {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+    .hero-actions {
+        justify-content: center;
+    }
+    .hero-carousel-wrapper {
+        flex: 0 0 100%;
+        max-width: 620px;
+        margin: 1.5rem auto 0;
+    }
+    .pasos-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .tarifas-grid {
+        grid-template-columns: 1fr;
+        max-width: 500px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+}
+
+@media (max-width: 640px) {
+    .hero-title {
+        font-size: 2.8rem;
+    }
+    .hero-carousel-wrapper {
+        max-width: 100%;
+        margin-top: 1rem;
+    }
+    .hero-carousel {
+        border-radius: 14px;
+    }
+    .hero-carousel-btn {
+        width: 32px;
+        height: 32px;
+        font-size: 0.95rem;
+    }
+    .hero-carousel-prev {
+        left: 8px;
+    }
+    .hero-carousel-next {
+        right: 8px;
+    }
+    .pasos-grid {
+        grid-template-columns: 1fr;
+    }
+    .hero-trust-bar {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .historia-card {
+        padding: 2rem 1.5rem;
+    }
+    .section-cta-futbol {
+        padding: 4rem 0;
+    }
+    .section-cta-futbol h2 {
+        font-size: 2rem;
+    }
+}
+
+/* ========================================================
+   6. NUESTRA UBICACIÓN (EN INICIO)
+   ======================================================== */
+.section-ubicacion {
+    padding: 5rem 0;
+    background-color: #FFFFFF;
+    border-top: 1px solid var(--fqs-border);
+}
+
+.ubicacion-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: 3rem;
+    align-items: center;
+}
+
+.ubicacion-info {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.ubicacion-card-items {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 0.5rem;
+}
+
+.ubicacion-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 14px 18px;
+    background: var(--fqs-background);
+    border: 1px solid var(--fqs-border);
+    border-radius: var(--border-radius);
+    transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.ubicacion-item:hover {
+    border-color: var(--fqs-primary);
+    transform: translateY(-2px);
+}
+
+.ubicacion-item-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    background: var(--fqs-green-soft);
+    color: var(--fqs-primary-hover);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    flex-shrink: 0;
+}
+
+.ubicacion-item-text strong {
+    display: block;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--fqs-navy);
+}
+
+.ubicacion-item-text span,
+.ubicacion-item-text a {
+    font-size: 0.9rem;
+    color: var(--fqs-text-muted);
+    text-decoration: none;
+    word-break: break-word;
+}
+
+.ubicacion-item-text a:hover {
+    color: var(--fqs-primary-hover);
+}
+
+@media (max-width: 992px) {
+    .ubicacion-grid {
+        grid-template-columns: 1fr;
+        gap: 2.5rem;
+    }
+}
+

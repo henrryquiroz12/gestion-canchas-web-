@@ -1,0 +1,290 @@
+/* ========================================================
+   nosotros.css - Estilos Dedicados para la Página Nosotros
+   Fredy Queen Soccer - FASE 16.2
+   ======================================================== */
+
+.nosotros-page {
+    background-color: var(--fqs-background, #F8FAFC);
+    min-height: 100vh;
+}
+
+/* 1. Hero Institucional */
+.nosotros-hero {
+    background: linear-gradient(180deg, #FFFFFF 0%, #F1F5F9 100%);
+    padding: clamp(36px, 5vw, 64px) var(--gutter, 16px) clamp(24px, 4vw, 40px);
+    border-bottom: 1px solid #E2E8F0;
+    text-align: center;
+}
+
+.nosotros-logo-wrap {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 16px;
+}
+
+.nosotros-brand-logo {
+    width: 130px;
+    height: 130px;
+    max-width: 150px;
+    max-height: 150px;
+    border-radius: 16px;
+    object-fit: contain;
+    background: #FFFFFF;
+    padding: 8px;
+    border: 2px solid #10B981;
+    box-shadow: 0 8px 24px rgba(16, 185, 129, 0.18);
+}
+
+.nosotros-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 14px;
+    background: #ECFDF5;
+    color: #065F46;
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    border-radius: 20px;
+    border: 1px solid rgba(16, 185, 129, 0.25);
+    margin-bottom: 12px;
+}
+
+.nosotros-title {
+    font-size: clamp(2rem, 3.5vw, 2.85rem);
+    font-weight: 800;
+    color: var(--fqs-navy, #0F172A);
+    letter-spacing: -0.02em;
+    margin-bottom: 10px;
+}
+
+.nosotros-subtitle {
+    font-size: 1.1rem;
+    color: var(--fqs-text-muted, #64748B);
+    max-width: 680px;
+    margin: 0 auto;
+    line-height: 1.5;
+}
+
+/* 2. Sección Nuestra Historia */
+.nosotros-section {
+    padding: clamp(36px, 5vw, 60px) var(--gutter, 16px);
+}
+
+.nosotros-story-card {
+    background: #FFFFFF;
+    border: 1px solid #E2E8F0;
+    border-radius: var(--border-radius-lg, 16px);
+    padding: clamp(28px, 4vw, 48px);
+    box-shadow: 0 4px 20px rgba(15, 23, 42, 0.05);
+    max-width: 960px;
+    margin: 0 auto;
+}
+
+.nosotros-story-lead {
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: #0F172A;
+    line-height: 1.65;
+    margin-bottom: 16px;
+}
+
+.nosotros-story-text {
+    font-size: 1rem;
+    color: #475569;
+    line-height: 1.7;
+    margin-bottom: 0;
+}
+
+/* 3. Misión, Visión y Valores */
+.mvv-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    max-width: 1140px;
+    margin: 0 auto;
+}
+
+.mvv-card {
+    background: #FFFFFF;
+    border: 1px solid #E2E8F0;
+    border-radius: var(--border-radius-lg, 16px);
+    padding: 32px 24px;
+    box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.mvv-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+}
+
+.mvv-card--featured {
+    border-color: #10B981;
+    background: linear-gradient(180deg, #FFFFFF 0%, #F0FDF4 100%);
+    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.1);
+}
+
+.mvv-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: #ECFDF5;
+    color: #059669;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    margin-bottom: 18px;
+}
+
+.mvv-card h2 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #0F172A;
+    margin-bottom: 12px;
+}
+
+.mvv-card p {
+    font-size: 0.95rem;
+    color: #475569;
+    line-height: 1.6;
+    margin: 0;
+}
+
+/* 4. Instalaciones */
+.instalaciones-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 20px;
+    max-width: 1140px;
+    margin: 0 auto;
+}
+
+.instalacion-item {
+    background: #FFFFFF;
+    border: 1px solid #E2E8F0;
+    border-radius: 12px;
+    padding: 24px;
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+}
+
+.instalacion-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    background: #F1F5F9;
+    color: #10B981;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    flex-shrink: 0;
+}
+
+.instalacion-body h3 {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #0F172A;
+    margin: 0 0 6px 0;
+}
+
+.instalacion-body p {
+    font-size: 0.9rem;
+    color: #64748B;
+    line-height: 1.5;
+    margin: 0;
+}
+
+/* 5. Galería de Imágenes Responsive */
+.galeria-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    max-width: 1140px;
+    margin: 0 auto;
+}
+
+.galeria-img-wrap {
+    width: 100%;
+    height: 250px;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.08);
+    border: 1px solid #E2E8F0;
+}
+
+.galeria-img-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.3s ease;
+}
+
+.galeria-img-wrap:hover img {
+    transform: scale(1.03);
+}
+
+/* Responsive */
+@media (max-width: 991.98px) {
+    .mvv-grid {
+        grid-template-columns: 1fr;
+        gap: 18px;
+    }
+    .galeria-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 576px) {
+    .galeria-grid {
+        grid-template-columns: 1fr;
+    }
+    .galeria-img-wrap {
+        height: 220px;
+    }
+    .nosotros-brand-logo {
+        width: 100px;
+        height: 100px;
+    }
+}
+/* Encabezados Centrados de Sección (Institucional, Instalaciones, Galería) */
+.nosotros-section-header {
+    text-align: center !important;
+    margin-bottom: 2.5rem;
+}
+
+.nosotros-section-header .badge-sub {
+    display: inline-block;
+    color: var(--fqs-primary, #10B981);
+    font-weight: 700;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 0.5rem;
+    text-align: center;
+}
+
+.nosotros-section-header .section-heading {
+    font-size: clamp(1.8rem, 3vw, 2.3rem);
+    font-weight: 800;
+    color: var(--fqs-navy, #0F172A);
+    letter-spacing: -0.5px;
+    margin-bottom: 0.5rem;
+    text-align: center !important;
+}
+
+.nosotros-section-header .section-subtitle {
+    font-size: 1.05rem;
+    color: var(--fqs-text-muted, #64748B);
+    max-width: 620px;
+    margin: 0 auto;
+    line-height: 1.5;
+    text-align: center !important;
+}

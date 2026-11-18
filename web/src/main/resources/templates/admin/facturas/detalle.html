@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head-dashboard}"></head>
+<body class="dashboard-body">
+    <div th:replace="~{fragments/layout :: navbar}"></div>
+    <main class="dashboard-main">
+        <div class="dashboard-topbar">
+            <div class="dashboard-topbar-text">
+                <h1>Detalle de Comprobante</h1>
+                <p th:text="'Comprobante Interno: ' + ${factura.numeroFactura}"></p>
+            </div>
+            <div class="dashboard-topbar-actions ms-auto gap-2 d-flex">
+                <a th:href="@{/admin/facturas/{id}/pdf(id=${factura.id})}" class="btn btn-outline-danger">
+                    <i class="bi bi-file-earmark-pdf"></i> PDF
+                </a>
+                <a th:href="@{/admin/facturas}" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-left"></i> Volver
+                </a>
+            </div>
+        </div>
+
+        <div th:if="${mensajeExito}" class="alert-toast alert-toast--success">
+            <i class="bi bi-check-circle"></i>
+            <span th:text="${mensajeExito}"></span>
+        </div>
+        <div th:if="${mensajeError}" class="alert-toast alert-toast--error">
+            <i class="bi bi-exclamation-triangle"></i>
+            <span th:text="${mensajeError}"></span>
+        </div>
+
+        <section class="dashboard-section active">
+            <div class="row">
+                <div class="col-lg-8">
+                    <div class="analytics-card mb-4">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h5 class="m-0 fw-bold"><i class="bi bi-receipt"></i> Información General</h5>
+                            <span th:if="${factura.estado.name() == 'EMITIDA'}" class="badge bg-success fs-6">EMITIDA</span>
+                            <span th:if="${factura.estado.name() == 'ANULADA'}" class="badge bg-danger fs-6">ANULADA</span>
+                        </div>
+                        
+                        <div class="row mb-4">
+                            <div class="col-sm-6">
+                                <p class="text-muted mb-1 small">Cliente</p>
+                                <p class="fw-bold mb-3" th:text="${factura.alquiler.cliente.nombreCompleto}"></p>
+                                
+                                <p class="text-muted mb-1 small">Documento</p>
+                                <p class="fw-bold mb-3" th:text="${factura.alquiler.cliente.dni != null ? 'DNI: ' + factura.alquiler.cliente.dni : 'Sin DNI'}"></p>
+                                
+                                <p class="text-muted mb-1 small">Método de Pago</p>
+                                <p class="fw-bold mb-0" th:text="${factura.alquiler.metodoPago}"></p>
+                            </div>
+                            <div class="col-sm-6 text-sm-end">
+                                <p class="text-muted mb-1 small">Fecha de Emisión</p>
+                                <p class="fw-bold mb-3" th:text="${#temporals.format(factura.fechaEmision, 'dd/MM/yyyy HH:mm')}"></p>
+                                
+                                <p class="text-muted mb-1 small">Cancha</p>
+                                <p class="fw-bold mb-3" th:text="${factura.alquiler.cancha.nombre}"></p>
+                                
+                                <p class="text-muted mb-1 small">Fecha / Hora de Reserva</p>
+                                <p class="fw-bold mb-0" th:text="${#temporals.format(factura.alquiler.fechaAlquiler, 'dd/MM/yyyy')} + ' (' + ${factura.alquiler.horaInicio} + ' - ' + ${factura.alquiler.horaFin} + ')'"></p>
+                            </div>
+                        </div>
+
+                        <hr>
+                        <h6 class="fw-bold mb-3 mt-4">Conceptos Facturados</h6>
+                        <table class="table table-borderless">
+                            <tbody>
+                                <tr>
+                                    <td>Alquiler Cancha (Precio Base)</td>
+                                    <td class="text-end" th:text="'S/ ' + ${factura.alquiler.precioBaseAplicado}"></td>
+                                </tr>
+                                <tr th:if="${factura.alquiler.recargoIluminacionAplicado > 0}">
+                                    <td>Recargo por Iluminación</td>
+                                    <td class="text-end" th:text="'S/ ' + ${factura.alquiler.recargoIluminacionAplicado}"></td>
+                                </tr>
+                            </tbody>
+                            <tfoot class="border-top">
+                                <tr>
+                                    <th class="pt-3 fs-5">TOTAL</th>
+                                    <th class="text-end pt-3 fs-5 text-primary" th:text="'S/ ' + ${factura.montoTotal}"></th>
+                                </tr>
+                            </tfoot>
+                        </table>
+                        <div class="text-center mt-5 mb-2">
+                            <small class="text-muted fst-italic">Documento interno de Fredy Queen Soccer.</small>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4">
+                    <div class="analytics-card text-center" th:if="${factura.estado.name() == 'EMITIDA'}">
+                        <h5 class="fw-bold mb-3">Acciones Peligrosas</h5>
+                        <p class="text-muted small">Al anular un comprobante, cambiará su estado permanentemente pero no se eliminará de la base de datos.</p>
+                        <form th:action="@{/admin/facturas/{id}/anular(id=${factura.id})}" method="post">
+                            <button type="submit" class="btn btn-outline-danger w-100" onclick="return confirm('¿Está seguro de anular este comprobante? Esta acción no se puede deshacer.')">
+                                <i class="bi bi-x-circle"></i> Anular Comprobante
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    <footer th:replace="~{fragments/layout :: footer}"></footer>
+    <div th:replace="~{fragments/footer :: scripts}"></div>
+</body>
+</html>

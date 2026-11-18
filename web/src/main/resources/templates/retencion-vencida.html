@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head-dashboard}"></head>
+<body>
+<div th:replace="~{fragments/layout :: navbar}"></div>
+<main class="container" style="padding: 3rem 1rem;">
+    <h1>Consulta disponibilidad de nuevo</h1>
+    <p role="alert" th:text="${holdError ?: 'La retención terminó o fue cancelada. No se ha creado una reserva.'}"></p>
+    <div th:replace="~{fragments/reservation-hold :: banner}"></div>
+    <a th:href="${visitorHold != null} ? @{/canchas/{id}(id=${visitorHold.courtId})} : @{/canchas}" class="btn btn-primary">Volver a consultar horarios</a>
+</main>
+<script th:replace="~{fragments/layout :: navbar-js}"></script>
+</body>
+</html>

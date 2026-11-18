@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis Reservas - Fredy Queen Soccer</title>
+    <link rel="icon" type="image/png" th:href="@{/img/favicon.png}">
+    <link rel="stylesheet" th:href="@{/css/global.css}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/public.css}">
+    <link rel="stylesheet" th:href="@{/css/catalog.css}">
+</head>
+<body class="catalog-page">
+
+    <!-- Navbar -->
+    <div th:replace="~{fragments/layout :: navbar}"></div>
+
+    <!-- Header -->
+    <header class="catalog-header">
+        <div class="container">
+            <h1 class="catalog-title">Mis reservas</h1>
+            <p class="catalog-lead">Consulta tus próximas reservas y tu historial de alquileres.</p>
+        </div>
+    </header>
+
+    <!-- Contenido Principal -->
+    <main class="container catalog-main" style="min-height: 50vh;">
+        
+        <div th:if="${param.cancelada}" class="alert-toast alert-toast--success mb-4" style="position: static; transform: none; width: 100%;">
+            <i class="bi bi-check-circle"></i>
+            <span>Reserva cancelada correctamente.</span>
+        </div>
+
+        <div class="catalog-controls mb-4">
+            <div class="filters">
+                <a th:href="@{/cliente/reservas}" class="filter-btn" th:classappend="${param.estado == null} ? 'active' : ''">Todas</a>
+                <a th:href="@{/cliente/reservas(estado='PENDIENTE')}" class="filter-btn" th:classappend="${param.estado != null and param.estado[0] == 'PENDIENTE'} ? 'active' : ''">Pendientes</a>
+                <a th:href="@{/cliente/reservas(estado='CONFIRMADO')}" class="filter-btn" th:classappend="${param.estado != null and param.estado[0] == 'CONFIRMADO'} ? 'active' : ''">Confirmadas</a>
+                <a th:href="@{/cliente/reservas(estado='COMPLETADO')}" class="filter-btn" th:classappend="${param.estado != null and param.estado[0] == 'COMPLETADO'} ? 'active' : ''">Completadas</a>
+                <a th:href="@{/cliente/reservas(estado='CANCELADO')}" class="filter-btn" th:classappend="${param.estado != null and param.estado[0] == 'CANCELADO'} ? 'active' : ''">Canceladas</a>
+            </div>
+        </div>
+
+        <div th:if="${#lists.isEmpty(misAlquileres)}" class="empty-state">
+            <div class="empty-icon">
+                <i class="bi bi-calendar2-x" style="font-size: 3.5rem; color: var(--fqs-text-muted);" aria-hidden="true"></i>
+            </div>
+            <h2>No tienes reservas</h2>
+            <p>No se encontraron reservas con los filtros seleccionados.</p>
+            <a th:href="@{/canchas}" class="btn btn-primary mt-3">Ir a reservar</a>
+        </div>
+
+        <div th:unless="${#lists.isEmpty(misAlquileres)}" class="reservations-results">
+            <div class="reservations-scroll" role="region" aria-label="Tabla de reservas" tabindex="0">
+                <table class="table-custom" style="width: 100%; border-collapse: collapse;">
+                    <thead style="background: var(--fqs-navy, #0F172A); color: white;">
+                        <tr>
+                            <th style="padding: 14px 18px; text-align: left; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Cancha</th>
+                            <th style="padding: 14px 18px; text-align: left; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Fecha</th>
+                            <th style="padding: 14px 18px; text-align: left; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Horario</th>
+                            <th style="padding: 14px 18px; text-align: left; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Monto</th>
+                            <th style="padding: 14px 18px; text-align: left; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Estado</th>
+                            <th style="padding: 14px 18px; text-align: left; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="alquiler : ${misAlquileres}" style="border-bottom: 1px solid var(--fqs-border, #E2E8F0);">
+                            <td style="padding: 14px 18px; font-weight: 600; color: var(--fqs-navy);" th:text="${alquiler.cancha.nombre}"></td>
+                            <td style="padding: 14px 18px; color: var(--fqs-text);" th:text="${#temporals.format(alquiler.fechaAlquiler, 'dd/MM/yyyy')}"></td>
+                            <td style="padding: 14px 18px; color: var(--fqs-text);" th:text="${alquiler.horaInicio} + ' - ' + (${#strings.startsWith(alquiler.horaFin, '00:00')} ? '24:00' : ${alquiler.horaFin})"></td>
+                            <td style="padding: 14px 18px; font-weight: 700; color: var(--fqs-primary-hover);" th:text="'S/ ' + ${alquiler.montoTotal}"></td>
+                            <td style="padding: 14px 18px;">
+                                <span class="badge-estado"
+                                      th:classappend="${alquiler.estado.name() == 'PENDIENTE'} ? 'badge-pendiente' :
+                                                      (${alquiler.estado.name() == 'CONFIRMADO'} ? 'badge-confirmado' :
+                                                      (${alquiler.estado.name() == 'COMPLETADO'} ? 'badge-completado' :
+                                                      'badge-cancelado'))"
+                                      th:text="${alquiler.estado}"></span>
+                            </td>
+                            <td style="padding: 14px 18px;">
+                                <a th:href="@{/cliente/reservas/{id}(id=${alquiler.id})}" class="btn btn-outline btn-sm" style="padding: 5px 14px; font-size: 0.85rem; border-radius: 6px;">Ver detalle</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Paginación estilo maqueta -->
+            <div th:replace="~{fragments/pagination :: pager(${clientReservationsPage.number}, ${clientReservationsPage.totalPages}, ${clientReservationsPage.totalElements}, ${clientReservationsPage.size}, '/cliente/reservas', 'estado', ${estadoFiltro})}"></div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <div th:replace="~{fragments/layout :: footer}"></div>
+    
+    <!-- Scripts -->
+    <script th:replace="~{fragments/layout :: navbar-js}"></script>
+
+</body>
+</html>

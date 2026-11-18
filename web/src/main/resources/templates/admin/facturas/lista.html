@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head-dashboard}"></head>
+<body class="dashboard-body">
+    <div th:replace="~{fragments/layout :: navbar}"></div>
+    <main class="dashboard-main">
+        <div class="dashboard-topbar">
+            <div class="dashboard-topbar-text">
+                <h1>Comprobantes Internos</h1>
+                <p>Historial de comprobantes generados para reservas</p>
+            </div>
+            <!-- Botón para generar lo pondremos en las reservas, aquí es lista general -->
+        </div>
+
+        <div th:if="${mensajeExito}" class="alert-toast alert-toast--success">
+            <i class="bi bi-check-circle"></i>
+            <span th:text="${mensajeExito}"></span>
+        </div>
+        <div th:if="${mensajeError}" class="alert-toast alert-toast--error">
+            <i class="bi bi-exclamation-triangle"></i>
+            <span th:text="${mensajeError}"></span>
+        </div>
+
+        <section class="dashboard-section active">
+            <div class="analytics-card">
+                <div class="table-responsive">
+                    <table class="table-custom">
+                        <thead>
+                            <tr>
+                                <th>Número</th>
+                                <th>ID Reserva</th>
+                                <th>Cliente</th>
+                                <th>Fecha Emisión</th>
+                                <th>Monto (S/)</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="fac : ${facturas}">
+                                <td class="fw-bold" th:text="${fac.numeroFactura}"></td>
+                                <td th:text="${fac.alquiler.id}"></td>
+                                <td th:text="${fac.alquiler.cliente.nombreCompleto}"></td>
+                                <td th:text="${#temporals.format(fac.fechaEmision, 'dd/MM/yyyy HH:mm')}"></td>
+                                <td th:text="${fac.montoTotal}"></td>
+                                <td>
+                                    <span th:if="${fac.estado.name() == 'EMITIDA'}" class="badge bg-success">EMITIDA</span>
+                                    <span th:if="${fac.estado.name() == 'ANULADA'}" class="badge bg-danger">ANULADA</span>
+                                </td>
+                                <td>
+                                    <a th:href="@{/admin/facturas/{id}(id=${fac.id})}" class="btn btn-sm btn-outline-primary" title="Ver Detalle">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                    <a th:href="@{/admin/facturas/{id}/pdf(id=${fac.id})}" class="btn btn-sm btn-outline-danger" title="Descargar PDF">
+                                        <i class="bi bi-file-earmark-pdf"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(facturas)}">
+                                <td colspan="7" class="text-center text-muted py-4">
+                                    <i class="bi bi-receipt fs-1 d-block mb-2"></i>
+                                    No hay comprobantes emitidos.
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Paginación estilo maqueta -->
+                <div th:replace="~{fragments/pagination :: pager(${receiptsPage.number}, ${receiptsPage.totalPages}, ${receiptsPage.totalElements}, ${receiptsPage.size}, '/admin/facturas', 'q', null)}"></div>
+            </div>
+        </section>
+    </main>
+    <footer th:replace="~{fragments/layout :: footer}"></footer>
+    <div th:replace="~{fragments/footer :: scripts}"></div>
+</body>
+</html>

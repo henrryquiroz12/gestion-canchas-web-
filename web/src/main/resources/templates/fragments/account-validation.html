@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<th:block th:fragment="scripts">
+    <script th:inline="javascript">
+        window.ACCOUNT_RULES = {
+            fullName: /*[[${T(com.canchas.web.validation.AccountRules).NAME}]]*/ '',
+            dni: /*[[${T(com.canchas.web.validation.AccountRules).DNI}]]*/ '',
+            phoneNumber: /*[[${T(com.canchas.web.validation.AccountRules).PHONE}]]*/ '',
+            email: /*[[${T(com.canchas.web.validation.AccountRules).EMAIL}]]*/ ''
+        };
+    </script>
+    <script th:src="@{/js/core/account-validation.js}"></script>
+</th:block>
+</html>

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+    <!-- Modal Editar Precio -->
+    <div th:fragment="modal" class="modal fade" id="modalCancha" tabindex="-1" aria-labelledby="tituloModalCancha" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow">
+                <div class="modal-header border-bottom">
+                    <h5 class="modal-title fw-bold" id="tituloModalCancha">Editar cancha</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <form id="formCancha" method="post">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                    <div class="modal-body p-4">
+                        <div class="modal-feedback"></div>
+
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold text-muted">Nombre de la Cancha (Fijo)</label>
+                            <input type="text" class="form-control bg-light" id="canchaNombre" readonly style="cursor: not-allowed;">
+                            <small class="text-muted" style="font-size: 0.75rem;">Dato estructural fijo del establecimiento.</small>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold text-muted">Tipo de Cancha (Fijo)</label>
+                            <input type="text" class="form-control bg-light" id="canchaTipoTexto" readonly style="cursor: not-allowed;">
+                        </div>
+                        <div class="mb-3">
+                            <label for="canchaPrecio" class="form-label small fw-bold text-dark">Precio por Hora (S/) *</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light fw-bold">S/</span>
+                                <input type="number" step="0.01" min="0.01" class="form-control fw-bold fs-5 text-success" id="canchaPrecio" name="precioHora" required placeholder="Ej. 40.00">
+                            </div>
+                            <div class="invalid-feedback" data-error-for="precioHora"></div>
+                            <small class="text-muted" style="font-size: 0.75rem;">Las reservas existentes conservan el precio pactado mediante snapshot.</small>
+                        </div>
+                        <div class="mb-2">
+                            <label for="canchaDescripcion" class="form-label small fw-bold text-muted">Descripción (Opcional)</label>
+                            <textarea class="form-control" id="canchaDescripcion" name="descripcion" rows="2" placeholder="Detalles de la cancha..."></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer border-top bg-light">
+                        <button type="button" class="btn btn-outline-secondary px-3" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary btn-primary-custom px-4" id="btnGuardarCancha">Guardar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Confirmación Deshabilitar Cancha -->
+    <div th:fragment="modal-deshabilitar" class="modal fade" id="modalConfirmarDeshabilitar" tabindex="-1" aria-labelledby="tituloModalDeshabilitar" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow">
+                <div class="modal-header border-bottom bg-light">
+                    <h5 class="modal-title fw-bold text-danger" id="tituloModalDeshabilitar">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                        <span id="textoTituloDeshabilitar">¿Deshabilitar Cancha?</span>
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body p-4 text-center">
+                    <p class="fs-6 text-dark mb-2" id="mensajeDeshabilitar">
+                        Los clientes dejarán de poder realizar nuevas reservas en esta cancha. Las reservas históricas no se eliminarán.
+                    </p>
+                    <p class="text-muted small mb-0">
+                        Las reservas ya registradas se conservan, incluidas las futuras.
+                    </p>
+                </div>
+                <form id="formConfirmarDeshabilitar" method="post">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                    <input type="hidden" name="disponible" value="false" />
+                    <div class="modal-footer border-top justify-content-center bg-light">
+                        <button type="button" class="btn btn-outline-secondary px-4" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-danger px-4 fw-bold">Deshabilitar cancha</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

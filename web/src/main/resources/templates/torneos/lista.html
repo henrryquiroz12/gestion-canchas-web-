@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Torneos y Copas - Fredy Queen Soccer</title>
+    <link rel="icon" type="image/png" th:href="@{/img/favicon.png}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/global.css}">
+    <link rel="stylesheet" th:href="@{/css/public.css}">
+    <link rel="stylesheet" th:href="@{/css/torneos.css}">
+</head>
+<body class="torneos-page">
+
+    <!-- Skip Link WCAG -->
+    <a href="#main-content" class="skip-link">Saltar al contenido principal</a>
+
+    <!-- Navbar -->
+    <div th:replace="~{fragments/layout :: navbar}"></div>
+
+    <!-- Contenido Principal -->
+    <main id="main-content" class="torneos-page-content">
+
+        <!-- Hero Torneos -->
+        <section class="torneos-hero py-5">
+            <div class="container-fqs text-center">
+                <div class="hero-badge mx-auto mb-2">
+                    <span class="hero-badge-dot"></span> COMPETENCIAS OFICIALES
+                </div>
+                <h1 class="torneos-hero-title">Torneos y Copas Fredy Queen</h1>
+                <p class="torneos-hero-lead">
+                    Inscribe a tu equipo, compite por grandes premios y demuestra tu nivel en el mejor césped sintético de Trujillo.
+                </p>
+                <div class="mt-3">
+                    <a th:href="@{/torneos/como-funciona}" class="btn-como-funciona">
+                        <i class="bi bi-question-circle-fill" aria-hidden="true"></i> ¿Cómo funciona el sistema de torneos?
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Listado de Torneos Activos -->
+        <section class="torneos-list-section py-4">
+            <div class="container-fqs">
+                <div class="torneos-grid">
+                    <!-- Iteración sobre torneos activos (Cards 1 y 2) -->
+                    <article th:each="torneo : ${torneos}" class="torneo-card" th:classappend="${torneo.isFree()} ? 'torneo-card--free' : 'torneo-card--paid'">
+                        <div class="torneo-card-header">
+                            <span th:if="${torneo.isFree()}" class="torneo-badge torneo-badge--free">
+                                <i class="bi bi-gift-fill" aria-hidden="true"></i> Inscripción Gratuita
+                            </span>
+                            <span th:unless="${torneo.isFree()}" class="torneo-badge torneo-badge--paid">
+                                <i class="bi bi-trophy-fill" aria-hidden="true"></i> Copa Oficial
+                            </span>
+                            <h2 class="torneo-card-title" th:text="${torneo.name}">Nombre del Torneo</h2>
+                            <p class="torneo-card-format">
+                                <i class="bi bi-diagram-3-fill" aria-hidden="true"></i> Formato: <span th:text="${torneo.format != null ? torneo.format : 'Fútbol 7'}">Fútbol 7</span>
+                            </p>
+                        </div>
+                        <div class="torneo-card-body">
+                            <p class="torneo-card-desc" th:text="${torneo.description}">Descripción del torneo</p>
+                            <div class="torneo-card-price">
+                                <span class="price-label">Inversión por equipo:</span>
+                                <div class="price-value" th:if="${torneo.isFree()}">
+                                    <span class="price-amount text-success">S/ 0.00</span>
+                                    <span class="price-tag">(Gratis)</span>
+                                </div>
+                                <div class="price-value" th:unless="${torneo.isFree()}">
+                                    <span class="price-amount" th:text="'S/ ' + ${#numbers.formatDecimal(torneo.pricePerTeam, 1, 2)}">S/ 280.00</span>
+                                </div>
+                            </div>
+                            <ul class="torneo-features">
+                                <li><i class="bi bi-check2-circle" aria-hidden="true"></i> Arbitraje y mesa oficial</li>
+                                <li><i class="bi bi-check2-circle" aria-hidden="true"></i> Cancha con iluminación nocturna</li>
+                                <li><i class="bi bi-check2-circle" aria-hidden="true"></i> Fixture y resultados actualizados</li>
+                            </ul>
+                        </div>
+                        <div class="torneo-card-footer">
+                            <a th:href="@{'/torneos/' + ${torneo.slug}}" class="btn btn-primary w-100" th:aria-label="'Ver bases e inscribirse en ' + ${torneo.name}">
+                                Ver bases e inscribirse <i class="bi bi-arrow-right" aria-hidden="true"></i>
+                            </a>
+                        </div>
+                    </article>
+
+                    <!-- CARD 3: Informativa / Cómo Funciona -->
+                    <article class="torneo-card torneo-card--info">
+                        <div class="torneo-card-header">
+                            <span class="torneo-badge torneo-badge--info">
+                                <i class="bi bi-info-circle-fill" aria-hidden="true"></i> Guía Rápida
+                            </span>
+                            <h2 class="torneo-card-title">¿Cómo Funcionan los Torneos?</h2>
+                            <p class="torneo-card-format">
+                                <i class="bi bi-shield-check" aria-hidden="true"></i> Reglas y pasos de participación
+                            </p>
+                        </div>
+                        <div class="torneo-card-body">
+                            <p class="torneo-card-desc">Conoce los requisitos, el proceso de inscripción y cómo se organizan los fixtures de nuestras competencias oficiales.</p>
+                            <div class="torneo-info-steps-preview">
+                                <div class="step-preview-item">
+                                    <span class="step-badge-num">1</span>
+                                    <span>Crea tu cuenta de cliente</span>
+                                </div>
+                                <div class="step-preview-item">
+                                    <span class="step-badge-num">2</span>
+                                    <span>Registra el nombre de tu equipo</span>
+                                </div>
+                                <div class="step-preview-item">
+                                    <span class="step-badge-num">3</span>
+                                    <span>Valida el pago en caja si aplica</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="torneo-card-footer">
+                            <a th:href="@{/torneos/como-funciona}" class="btn btn-outline w-100">
+                                Leer guía completa <i class="bi bi-arrow-right" aria-hidden="true"></i>
+                            </a>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <div th:replace="~{fragments/layout :: footer}"></div>
+    <script th:replace="~{fragments/layout :: navbar-js}"></script>
+
+</body>
+</html>

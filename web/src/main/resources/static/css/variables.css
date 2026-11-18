@@ -1,0 +1,19 @@
+:root {
+    /* ==========================================================================
+       FREDY QUEEN SOCCER — Sincronización de Variables Legacy con Design System
+       ========================================================================== */
+    --lima: #10B981;
+    --lima-hover: #059669;
+    --lima-dark: #047857;
+    --carbon: #0F172A;
+    --onyx: #0F172A;
+    --celeste: #0284C7;
+    --celeste-suave: #ECFDF5;
+    --blanco: #FFFFFF;
+    --gris-texto: #64748B;
+    --error: #DC2626;
+    --exito: #059669;
+    --radius-md: 10px;
+    --radius-lg: 14px;
+    --sombra: 0 4px 14px rgba(15, 23, 42, 0.06);
+}

@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${cancha.nombre} + ' - Fredy Queen Soccer'">Cancha - Fredy Queen Soccer</title>
+    <link rel="icon" type="image/png" th:href="@{/img/favicon.png}">
+    <link rel="stylesheet" th:href="@{/css/global.css}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/detalle.css}">
+    <meta name="csrf-token" th:content="${_csrf.token}" />
+</head>
+<body>
+
+    <!-- Skip Link WCAG -->
+    <a href="#main-content" class="skip-link">Saltar al contenido principal</a>
+
+    <!-- Navbar -->
+    <div th:replace="~{fragments/layout :: navbar}"></div>
+
+    <main id="main-content" class="detalle-main">
+        <div th:if="${error}" class="alert alert-danger" role="alert" th:text="${error}"></div>
+        <div th:replace="~{fragments/reservation-hold :: banner}"></div>
+        
+        <!-- Alerta de deshabilitada -->
+        <div th:if="${!cancha.disponible}" class="alert-disabled" role="alert">
+            <p>⚠️ Esta cancha se encuentra temporalmente no disponible para reservas.</p>
+        </div>
+
+        <div class="detalle-breadcrumbs">
+            <a th:href="@{/canchas}" class="back-link">&larr; Volver al catálogo de canchas</a>
+        </div>
+
+        <div class="detalle-layout">
+            <!-- Columna Izquierda (2/3): Especificaciones, Fotos y Ubicación -->
+            <div class="detalle-left">
+                <!-- Card 1: Detalles de la cancha -->
+                <section class="detalle-card" aria-labelledby="detalleCanchaTitulo">
+                    <div class="card-header-row">
+                        <div>
+                            <span class="cancha-type-badge" th:classappend="'badge-' + ${#strings.toLowerCase(cancha.tipo)}" th:text="${cancha.tipo}">NORMAL</span>
+                            <h1 id="detalleCanchaTitulo" class="detalle-title" th:text="${cancha.nombre}">Cancha 1</h1>
+                            <p class="detalle-subtitle">Fredy Queen Soccer · Trujillo</p>
+                        </div>
+                    </div>
+
+                    <div class="specs-grid">
+                        <div class="spec-item">
+                            <span class="spec-label">Formato</span>
+                            <strong class="spec-val" th:text="${cancha.tipo == 'GRANDE' ? 'Fútbol 7' : 'Fútbol 6'}">Fútbol 6</strong>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-label">Superficie</span>
+                            <strong class="spec-val">Grass Sintético</strong>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-label">Precio base</span>
+                            <strong class="spec-val">S/<span th:text="${cancha.precioHora}">40</span> / hora</strong>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-label">Iluminación</span>
+                            <strong class="spec-val spec-green">💡 +S/20 desde 18:00</strong>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-label">Duración</span>
+                            <strong class="spec-val">1 hora exacta</strong>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-label">Complejo</span>
+                            <strong class="spec-val">Fredy Queen Soccer</strong>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Card 2: Fotos de la cancha -->
+                <section class="detalle-card" aria-labelledby="fotosTitulo">
+                    <h2 id="fotosTitulo" class="section-title">Fotos de la cancha</h2>
+                    <div class="gallery-wrapper">
+                        <div class="gallery-main-image">
+                            <img th:if="${cancha.imagenUrl != null and !#strings.isEmpty(cancha.imagenUrl)}" 
+                                 th:src="@{${cancha.imagenUrl}}" 
+                                 th:alt="'Foto de ' + ${cancha.nombre}"
+                                 onerror="this.style.display='none'; var ph = this.nextElementSibling; if(ph) ph.style.display='flex';">
+                            <div th:style="${cancha.imagenUrl != null and !#strings.isEmpty(cancha.imagenUrl)} ? 'display: none;' : ''" class="gallery-placeholder">
+                                <span class="gallery-ball">⚽</span>
+                                <h3 th:text="${cancha.nombre}">Cancha 1</h3>
+                                <p>Fredy Queen Soccer · Césped sintético de alta durabilidad</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Card 3: Ubicación -->
+                <section class="detalle-card" aria-labelledby="ubicacionTitulo">
+                    <h2 id="ubicacionTitulo" class="section-title">Ubicación del complejo</h2>
+                    <p class="location-text">📍 <strong>Fredy Queen Soccer</strong> — Trujillo, La Libertad, Perú</p>
+                    <div class="map-container">
+                        <div th:replace="~{fragments/location :: business-map}"></div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Columna Derecha (1/3): Panel Sticky de Reserva -->
+            <div class="detalle-right">
+                <div class="reserva-panel">
+                    <div class="panel-header">
+                        <h2>Reservar horario</h2>
+                        <p class="panel-sub">Elige tu turno de 60 minutos</p>
+                    </div>
+                    
+                    <div th:if="${cancha.disponible}">
+                        <div class="fecha-selector">
+                            <label for="fechaReserva">Fecha de juego:</label>
+                            <input type="date" id="fechaReserva" class="form-control" th:min="${fechaHoyLima}">
+                        </div>
+
+                        <!-- Leyenda de Estados -->
+                        <div class="slots-legend">
+                            <span class="legend-item"><span class="legend-dot dot-libre"></span> Libre</span>
+                            <span class="legend-item"><span class="legend-dot dot-elegido"></span> Elegido</span>
+                            <span class="legend-item"><span class="legend-dot dot-ocupado"></span> Ocupado</span>
+                        </div>
+
+                        <!-- Horarios Container -->
+                        <div id="slotsContainer" class="slots-container" aria-live="polite">
+                            <p class="text-muted text-center" style="padding: 20px 0;">Selecciona una fecha para ver los horarios disponibles.</p>
+                        </div>
+                        
+                        <!-- Resumen Reserva -->
+                        <div id="resumenReserva" class="resumen-reserva" style="display: none;">
+                            <h3>Resumen de reserva</h3>
+                            <div class="resumen-row">
+                                <span>Cancha:</span> <strong th:text="${cancha.nombre}"></strong>
+                            </div>
+                            <div class="resumen-row">
+                                <span>Fecha:</span> <strong id="resumenFecha"></strong>
+                            </div>
+                            <div class="resumen-row">
+                                <span>Horario:</span> <strong id="resumenHorario"></strong>
+                            </div>
+                            <div class="resumen-row">
+                                <span>Precio base:</span> <strong id="resumenBase"></strong>
+                            </div>
+                            <div class="resumen-row" id="rowIluminacion" style="display: none;">
+                                <span>Iluminación noche:</span> <strong class="text-emerald">S/20.00</strong>
+                            </div>
+                            <hr class="resumen-divider">
+                            <div class="resumen-total">
+                                <span>Total a pagar:</span> <strong id="resumenTotal"></strong>
+                            </div>
+                        </div>
+
+                        <button id="btnContinuar" class="btn-continuar" disabled>Continuar reserva</button>
+                        <p class="guarantee-text">⚡ Reserva inmediata · Pago presencial en caja</p>
+                    </div>
+                    
+                    <div th:unless="${cancha.disponible}" class="panel-disabled">
+                        <p>Esta cancha está temporalmente inhabilitada para nuevas reservas.</p>
+                        <a th:href="@{/canchas}" class="btn-back-canchas">Ver otras canchas</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <form id="holdStartForm" method="post" th:action="@{/retenciones}" sec:authorize="isAnonymous()" hidden>
+        <input type="hidden" name="courtId" th:value="${cancha.id}">
+        <input type="hidden" name="date">
+        <input type="hidden" name="startTime">
+    </form>
+    <!-- Footer -->
+    <div th:replace="~{fragments/layout :: footer}"></div>
+    
+    <!-- Scripts -->
+    <script th:replace="~{fragments/layout :: navbar-js}"></script>
+    <script th:inline="javascript">
+        const CANCHA_ID = /*[[${cancha.id}]]*/ 0;
+        const FECHA_HOY_LIMA = /*[[${fechaHoyLima}]]*/ '';
+    </script>
+    <script th:src="@{/js/detalle.js}"></script>
+</body>
+</html>

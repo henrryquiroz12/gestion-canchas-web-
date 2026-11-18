@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+
+<!-- Skip link para accesibilidad WCAG 2.2 AA -->
+<a href="#main-content" class="fqs-skip-link">Saltar al contenido principal</a>
+
+<!-- Navbar Fragment Namespaced (.fqs-*) -->
+<header th:fragment="navbar" class="fqs-header">
+    <div class="fqs-navbar" th:classappend="${isAdminSection} ? 'fqs-navbar--admin' : ''">
+        <!-- Logo / Brand según contexto -->
+        <a th:if="${isAdminSection}" th:href="@{/admin/dashboard}" class="fqs-brand" aria-label="Ir al panel de administración de Fredy Queen Soccer">
+            <th:block th:replace="~{fragments/layout :: brand-content}"></th:block>
+        </a>
+        <a th:unless="${isAdminSection}" th:href="@{/inicio}" class="fqs-brand" aria-label="Ir a la página de inicio de Fredy Queen Soccer">
+            <th:block th:replace="~{fragments/layout :: brand-content}"></th:block>
+        </a>
+        
+        <!-- Mobile Toggle Button -->
+        <button class="fqs-menu-toggle" id="fqsMobileMenuBtn" aria-label="Menú de navegación" aria-expanded="false" aria-controls="fqsNavContainer">
+            <i class="bi bi-list" aria-hidden="true"></i>
+        </button>
+        
+        <!-- Nav Links & Menus -->
+        <nav class="fqs-nav-container" id="fqsNavContainer" aria-label="Navegación principal">
+            <!-- NAVEGACIÓN PÚBLICA (Cuando NO estamos en /admin/**: Visitante, CLIENTE o ADMIN en web pública) -->
+            <ul class="fqs-nav-list" th:unless="${isAdminSection}">
+                <li class="fqs-nav-item">
+                    <a th:href="@{/inicio}" class="fqs-nav-link" th:classappend="${activeSection == 'inicio'} ? 'active' : ''">Inicio</a>
+                </li>
+                <li class="fqs-nav-item">
+                    <a th:href="@{/canchas}" class="fqs-nav-link" th:classappend="${activeSection == 'canchas'} ? 'active' : ''">Canchas</a>
+                </li>
+                <li class="fqs-nav-item">
+                    <a th:href="@{/torneos}" class="fqs-nav-link" th:classappend="${activeSection == 'torneos'} ? 'active' : ''">Torneos</a>
+                </li>
+                <li class="fqs-nav-item">
+                    <a th:href="@{/nosotros}" class="fqs-nav-link" th:classappend="${activeSection == 'nosotros'} ? 'active' : ''">Nosotros</a>
+                </li>
+            </ul>
+
+            <!-- NAVEGACIÓN ADMINISTRATIVA (Únicamente ADMIN dentro de /admin/**) -->
+            <ul class="fqs-nav-list fqs-nav-list--admin" th:if="${isAdminSection}" sec:authorize="hasRole('ADMIN')">
+                <li class="fqs-nav-item">
+                    <a th:href="@{/admin/dashboard}" class="fqs-nav-link" th:classappend="${activeSection == 'dashboard'} ? 'active' : ''">Dashboard</a>
+                </li>
+                <li class="fqs-nav-item">
+                    <a th:href="@{/admin/canchas}" class="fqs-nav-link" th:classappend="${activeSection == 'canchas'} ? 'active' : ''">Canchas</a>
+                </li>
+                <li class="fqs-nav-item">
+                    <a th:href="@{/admin/reservas}" class="fqs-nav-link" th:classappend="${activeSection == 'reservas'} ? 'active' : ''">Reservas</a>
+                </li>
+                <li class="fqs-nav-item">
+                    <a th:href="@{/admin/clientes}" class="fqs-nav-link" th:classappend="${activeSection == 'clientes'} ? 'active' : ''">Clientes</a>
+                </li>
+                <li class="fqs-nav-item">
+                    <a th:href="@{/admin/torneos}" class="fqs-nav-link" th:classappend="${activeSection == 'gestion'} ? 'active' : ''">Torneos</a>
+                </li>
+                <li class="fqs-nav-item">
+                    <a th:href="@{/admin/horarios}" class="fqs-nav-link" th:classappend="${activeSection == 'horarios'} ? 'active' : ''">Horarios</a>
+                </li>
+                <li class="fqs-nav-item">
+                    <a th:href="@{/admin/reportes}" class="fqs-nav-link" th:classappend="${activeSection == 'reportes'} ? 'active' : ''">Reportes</a>
+                </li>
+            </ul>
+
+            <!-- ACCIONES USUARIO / SESIÓN -->
+            <div class="fqs-nav-actions">
+                <!-- VISITANTE ANÓNIMO -->
+                <div sec:authorize="isAnonymous()" class="fqs-auth-buttons">
+                    <a th:href="@{/login}" class="fqs-btn fqs-btn--text">Iniciar sesión</a>
+                    <a th:href="@{/registro}" class="fqs-btn fqs-btn--primary">Registrarse</a>
+                </div>
+
+                <!-- USUARIO AUTENTICADO -->
+                <div sec:authorize="isAuthenticated()" class="fqs-user-menu-wrapper">
+                    <button type="button" class="fqs-user-btn" id="fqsUserMenuBtn" aria-haspopup="true" aria-expanded="false" aria-controls="fqsUserDropdown">
+                        <span class="fqs-avatar">
+                            <i class="bi bi-person-fill" aria-hidden="true"></i>
+                        </span>
+                        <span class="fqs-username" th:text="${displayName != null ? displayName : #authentication.name}">Usuario</span>
+                        <i class="bi bi-chevron-down fqs-arrow" aria-hidden="true"></i>
+                    </button>
+                    
+                    <ul class="fqs-user-dropdown-menu" id="fqsUserDropdown" role="menu" aria-labelledby="fqsUserMenuBtn">
+                        <!-- CONMUTADOR DE ROL RBAC (Para Administrador que también puede ser Cliente) -->
+                        <li th:if="${canSwitchRole}" role="none">
+                            <a th:href="@{/seleccionar-rol}" class="fqs-dropdown-link fw-bold text-success" role="menuitem">
+                                <i class="bi bi-person-badge" aria-hidden="true"></i> Cambiar de rol
+                            </a>
+                        </li>
+                        <li th:if="${canSwitchRole}" role="none" class="fqs-dropdown-divider"></li>
+
+                        <!-- OPCIONES CLIENTE -->
+                        <li th:if="${activeRole == 'CLIENTE'}" role="none">
+                            <a th:href="@{/cliente/perfil}" class="fqs-dropdown-link" role="menuitem">
+                                <i class="bi bi-person-gear" aria-hidden="true"></i> Mi Perfil
+                            </a>
+                        </li>
+                        <li th:if="${activeRole == 'CLIENTE'}" role="none">
+                            <a th:href="@{/cliente/reservas}" class="fqs-dropdown-link" role="menuitem">
+                                <i class="bi bi-calendar-check" aria-hidden="true"></i> Mis Reservas
+                            </a>
+                        </li>
+                        <li th:if="${activeRole == 'CLIENTE'}" role="none" class="fqs-dropdown-divider"></li>
+
+                        <!-- CERRAR SESIÓN COMÚN -->
+                        <li role="none">
+                            <form th:action="@{/logout}" method="post" class="fqs-logout-form">
+                                <button type="submit" class="fqs-dropdown-link fqs-logout-btn" role="menuitem">
+                                    <i class="bi bi-box-arrow-right" aria-hidden="true"></i> Cerrar Sesión
+                                </button>
+                            </form>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </div>
+</header>
+
+<!-- Fragmento de Contenido de Marca: Desktop y Mobile en UNA SOLA LÍNEA -->
+<th:block th:fragment="brand-content">
+    <div class="fqs-brand-content">
+        <img th:src="@{/images/brand/logo-fredy-queen-soccer.jpg}" 
+             alt="Logo Fredy Queen Soccer" 
+             class="fqs-brand-logo" 
+             onerror="this.style.display='none';">
+        <span class="fqs-brand-text">FREDY QUEEN <span class="fqs-brand-highlight">SOCCER</span></span>
+    </div>
+</th:block>
+
+<!-- Footer Fragment Namespaced (.fqs-*) Con Información Oficial Real -->
+<footer th:fragment="footer" class="fqs-footer">
+    <div class="fqs-footer-container">
+        <div class="fqs-footer-grid">
+            <!-- Columna 1: Brand & Descripción Real -->
+            <div class="fqs-footer-col">
+                <div class="fqs-brand-content mb-3">
+                    <img th:src="@{/images/brand/logo-fredy-queen-soccer.jpg}" 
+                         alt="Logo Fredy Queen Soccer" 
+                         class="fqs-brand-logo" 
+                         onerror="this.style.display='none';">
+                    <span class="fqs-brand-text">FREDY QUEEN <span class="fqs-brand-highlight">SOCCER</span></span>
+                </div>
+                <p class="fqs-footer-desc">
+                    Complejo deportivo en Trujillo con 10 canchas de grass sintético (8 normales y 2 grandes), iluminación nocturna y torneos oficiales.
+                </p>
+                <p class="fqs-footer-schedule">
+                    <i class="bi bi-clock-fill" aria-hidden="true"></i> Horario de atención: <strong>07:00 - 24:00</strong>
+                </p>
+            </div>
+
+            <!-- Columna 2: Información del Complejo -->
+            <div class="fqs-footer-col">
+                <h3 class="fqs-footer-title">Información del Complejo</h3>
+                <ul class="fqs-footer-complex-info" role="list">
+                    <li>
+                        <span class="fqs-bullet" aria-hidden="true">&bull;</span>
+                        <span>10 canchas sintéticas</span>
+                    </li>
+                    <li>
+                        <span class="fqs-bullet" aria-hidden="true">&bull;</span>
+                        <span>8 normales y 2 grandes</span>
+                    </li>
+                    <li>
+                        <span class="fqs-bullet" aria-hidden="true">&bull;</span>
+                        <span>Reservas de 60 minutos</span>
+                    </li>
+                    <li>
+                        <span class="fqs-bullet" aria-hidden="true">&bull;</span>
+                        <span>Iluminación desde 18:00</span>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Columna 3: Contacto Oficial Real (Sin datos falsos) -->
+            <div class="fqs-footer-col">
+                <h3 class="fqs-footer-title">Contacto &amp; Ubicación</h3>
+                <ul class="fqs-footer-contact">
+                    <li>
+                        <i class="bi bi-geo-alt-fill" aria-hidden="true"></i>
+                        <span>Trujillo, Perú</span>
+                    </li>
+                    <li>
+                        <i class="bi bi-telephone-fill" aria-hidden="true"></i>
+                        <a href="tel:949356493" class="fqs-contact-link">949356493</a>
+                    </li>
+                    <li>
+                        <i class="bi bi-envelope-fill" aria-hidden="true"></i>
+                        <a href="mailto:freddyquinnsoccer@gmail.com" class="fqs-contact-link">freddyquinnsoccer@gmail.com</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="fqs-footer-bottom">
+            <p>&copy; <span th:text="${#temporals.format(#temporals.createNow(), 'yyyy')}">2026</span> Fredy Queen Soccer &middot; Trujillo, Perú. Todos los derechos reservados.</p>
+        </div>
+    </div>
+</footer>
+
+<!-- Fragmento JavaScript para Navbar, Accesibilidad y Toast Global (WCAG 2.2 AA) -->
+<th:block th:fragment="navbar-js">
+    <script>
+        // FQS Global Toast Helper (Hotfix FASE 16.4.6)
+        if (!window.FqsToast) {
+            window.FqsToast = {
+                show: function(message, type) {
+                    if (!message) return;
+                    type = type || 'success';
+
+                    const existing = document.getElementById('fqsGlobalToast');
+                    if (existing) existing.remove();
+
+                    const toast = document.createElement('div');
+                    toast.id = 'fqsGlobalToast';
+                    toast.className = 'fqs-toast' + (type !== 'success' ? ' fqs-toast--' + type : '');
+                    toast.setAttribute('role', 'status');
+                    toast.setAttribute('aria-live', 'polite');
+                    toast.setAttribute('aria-atomic', 'true');
+
+                    let iconClass = 'bi-check-circle-fill';
+                    if (type === 'error') iconClass = 'bi-exclamation-triangle-fill';
+                    else if (type === 'warning') iconClass = 'bi-exclamation-circle-fill';
+
+                    toast.innerHTML = '<i class="bi ' + iconClass + ' fqs-toast__icon" aria-hidden="true"></i>' +
+                                      '<span class="fqs-toast__text">' + message + '</span>';
+                    document.body.appendChild(toast);
+
+                    requestAnimationFrame(function() {
+                        toast.classList.add('fqs-toast--visible');
+                    });
+
+                    setTimeout(function() {
+                        toast.classList.remove('fqs-toast--visible');
+                        toast.classList.add('fqs-toast--hiding');
+                        setTimeout(function() {
+                            if (toast.parentNode) {
+                                toast.parentNode.removeChild(toast);
+                            }
+                        }, 400);
+                    }, 3500);
+                }
+            };
+            window.showFqsToast = window.FqsToast.show;
+        }
+
+        (function() {
+            if (window.__fqsNavbarInitialized) return;
+            window.__fqsNavbarInitialized = true;
+
+            // Mobile Menu Toggle (Hotfix FASE 16.4.7)
+            const mobileBtn = document.getElementById('fqsMobileMenuBtn');
+            const navContainer = document.getElementById('fqsNavContainer');
+            const mobileIcon = mobileBtn ? mobileBtn.querySelector('i') : null;
+
+            function openMobileMenu() {
+                if (!mobileBtn || !navContainer) return;
+                mobileBtn.setAttribute('aria-expanded', 'true');
+                navContainer.classList.add('open', 'active');
+                if (mobileIcon) {
+                    mobileIcon.classList.remove('bi-list');
+                    mobileIcon.classList.add('bi-x-lg');
+                }
+            }
+
+            function closeMobileMenu() {
+                if (!mobileBtn || !navContainer) return;
+                mobileBtn.setAttribute('aria-expanded', 'false');
+                navContainer.classList.remove('open', 'active');
+                if (mobileIcon) {
+                    mobileIcon.classList.remove('bi-x-lg');
+                    mobileIcon.classList.add('bi-list');
+                }
+                const userDropdown = document.getElementById('fqsUserDropdown');
+                const userBtn = document.getElementById('fqsUserMenuBtn');
+                if (userDropdown && userDropdown.classList.contains('show')) {
+                    userDropdown.classList.remove('show');
+                    if (userBtn) userBtn.setAttribute('aria-expanded', 'false');
+                }
+            }
+
+            function toggleMobileMenu() {
+                if (!mobileBtn) return;
+                const isExpanded = mobileBtn.getAttribute('aria-expanded') === 'true';
+                if (isExpanded) {
+                    closeMobileMenu();
+                } else {
+                    openMobileMenu();
+                }
+            }
+
+            if (mobileBtn && navContainer) {
+                mobileBtn.addEventListener('click', toggleMobileMenu);
+
+                // Accesibilidad teclado: Enter o Space (Requirement 14)
+                mobileBtn.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        toggleMobileMenu();
+                    }
+                });
+
+                // Cerrar al pulsar un enlace de navegación en mobile (Requirement 16)
+                navContainer.addEventListener('click', function(e) {
+                    const targetLink = e.target.closest('a');
+                    if (targetLink) {
+                        closeMobileMenu();
+                    }
+                });
+
+                // Cerrar con Escape y devolver foco al botón (Requirement 15)
+                document.addEventListener('keydown', function(e) {
+                    if (e.key === 'Escape') {
+                        if (navContainer.classList.contains('active') || navContainer.classList.contains('open')) {
+                            closeMobileMenu();
+                            mobileBtn.focus();
+                        }
+                    }
+                });
+
+                // Al cambiar el tamaño de ventana a desktop, restablecer menú mobile (Requirement 17)
+                window.addEventListener('resize', function() {
+                    const isDesktop = window.innerWidth >= 1100;
+                    if (isDesktop && (navContainer.classList.contains('active') || navContainer.classList.contains('open'))) {
+                        closeMobileMenu();
+                    }
+                });
+            }
+
+            // User Dropdown Toggle (Desktop & Mobile & Teclado)
+            const userBtn = document.getElementById('fqsUserMenuBtn');
+            const userDropdown = document.getElementById('fqsUserDropdown');
+            const wrapper = userBtn ? userBtn.closest('.fqs-user-menu-wrapper') : null;
+
+            if (userBtn && userDropdown) {
+                // Hotfix FASE 16.4.4: En /admin/** asegurar que no aparezca panel administrativo ni separador innecesario
+                if (window.location && window.location.pathname && (window.location.pathname.startsWith('/admin/') || window.location.pathname === '/admin')) {
+                    const adminPanelLink = userDropdown.querySelector('a[href*="/admin/dashboard"]');
+                    if (adminPanelLink) {
+                        const li = adminPanelLink.closest('li');
+                        if (li) li.remove();
+                    }
+                    const adminDivider = userDropdown.querySelector('.fqs-dropdown-divider--admin');
+                    if (adminDivider) {
+                        adminDivider.remove();
+                    }
+                }
+
+                function toggleDropdown(e) {
+                    if (e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                    }
+                    const isOpen = userDropdown.classList.contains('show');
+                    if (isOpen) {
+                        closeDropdown();
+                    } else {
+                        openDropdown();
+                    }
+                }
+
+                function openDropdown() {
+                    userBtn.setAttribute('aria-expanded', 'true');
+                    userDropdown.classList.add('show');
+                }
+
+                function closeDropdown() {
+                    userBtn.setAttribute('aria-expanded', 'false');
+                    userDropdown.classList.remove('show');
+                }
+
+                userBtn.addEventListener('click', toggleDropdown);
+
+                // Accesibilidad teclado: Enter o Space
+                userBtn.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        toggleDropdown(e);
+                    }
+                });
+
+                // Sincronizar aria-expanded con hover en desktop
+                if (wrapper) {
+                    wrapper.addEventListener('mouseenter', function() {
+                        userBtn.setAttribute('aria-expanded', 'true');
+                    });
+                    wrapper.addEventListener('mouseleave', function() {
+                        if (!userDropdown.classList.contains('show')) {
+                            userBtn.setAttribute('aria-expanded', 'false');
+                        }
+                    });
+                }
+
+                // Cerrar al hacer clic fuera
+                document.addEventListener('click', function(e) {
+                    if (!userBtn.contains(e.target) && !userDropdown.contains(e.target)) {
+                        closeDropdown();
+                    }
+                });
+
+                // Cerrar con Escape y devolver foco al botón
+                document.addEventListener('keydown', function(e) {
+                    if (e.key === 'Escape') {
+                        if (userDropdown.classList.contains('show') || userBtn.getAttribute('aria-expanded') === 'true') {
+                            closeDropdown();
+                            userBtn.focus();
+                        }
+                    }
+                });
+            }
+        })();
+    </script>
+</th:block>
+
+</body>
+</html>

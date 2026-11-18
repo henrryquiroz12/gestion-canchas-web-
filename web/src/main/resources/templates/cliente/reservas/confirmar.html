@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirmar Reserva - Fredy Queen Soccer</title>
+    <link rel="stylesheet" th:href="@{/css/global.css}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/public.css}">
+    <link rel="stylesheet" th:href="@{/css/catalog.css}">
+</head>
+<body class="catalog-page">
+
+    <!-- Navbar -->
+    <div th:replace="~{fragments/layout :: navbar}"></div>
+
+    <!-- Header -->
+    <header class="catalog-header" style="padding-bottom: 2rem; padding-top: 2rem;">
+        <div class="container">
+            <h1 class="catalog-title" style="font-size: 2rem;">Confirmar Reserva</h1>
+            <p class="catalog-lead">Verifica y confirma los detalles de tu alquiler.</p>
+        </div>
+    </header>
+
+    <!-- Contenido Principal -->
+    <main class="container catalog-main" style="min-height: 50vh; display: flex; justify-content: center; padding-bottom: 4rem;">
+        
+        <div style="width: 100%; max-width: 600px;">
+            <div th:if="${error}" class="alert-toast alert-toast--error mb-4" style="position: static; transform: none; width: 100%;">
+                <i class="bi bi-exclamation-triangle"></i>
+                <span th:text="${error}"></span>
+            </div>
+
+            <div th:if="${error}" class="alert alert-danger" role="alert" th:text="${error}"></div>
+            <div th:replace="~{fragments/reservation-hold :: banner}"></div>
+            <form th:action="${holdConfirmation == true} ? @{/retenciones/confirmar} : @{/cliente/reservas}" method="post" th:object="${alquilerRequest}">
+                <input th:if="${holdConfirmation == true}" type="hidden" name="token" th:value="${visitorHold.token}">
+                <input type="hidden" th:field="*{canchaId}">
+                <input type="hidden" th:field="*{fechaAlquiler}">
+                <input type="hidden" th:field="*{horaInicio}">
+                
+                <div class="cancha-card" style="cursor: default; transition: none; padding: 2rem; border-radius: 14px; background: white; border: 1px solid var(--fqs-border); box-shadow: var(--shadow-sm); margin-bottom: 1.5rem;">
+                    <h2 style="font-size: 1.3rem; font-weight: 800; color: var(--fqs-navy); margin-top: 0; margin-bottom: 1.5rem; border-bottom: 1px solid var(--fqs-border); padding-bottom: 0.5rem;">Resumen de reserva</h2>
+                    
+                    <div style="display: grid; gap: 0.8rem;">
+                        <div style="display: flex; justify-content: space-between;">
+                            <span style="color: var(--fqs-text-muted);">Cancha:</span>
+                            <strong th:text="${cancha.nombre}" style="color: var(--fqs-navy);"></strong>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span style="color: var(--fqs-text-muted);">Tipo:</span>
+                            <strong th:text="${cancha.tipo}"></strong>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span style="color: var(--fqs-text-muted);">Fecha:</span>
+                            <strong th:text="${#temporals.format(alquilerRequest.fechaAlquiler, 'dd/MM/yyyy')}"></strong>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span style="color: var(--fqs-text-muted);">Horario:</span>
+                            <strong th:text="${slot.horaInicio} + ' - ' + ${slot.horaFin}"></strong>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-top: 0.5rem;">
+                            <span style="color: var(--fqs-text-muted);">Precio base:</span>
+                            <strong th:text="'S/ ' + ${slot.precioBase}"></strong>
+                        </div>
+                        <div th:if="${slot.recargoIluminacion > 0}" style="display: flex; justify-content: space-between;">
+                            <span style="color: var(--fqs-text-muted);"><i class="bi bi-lightbulb-fill text-warning me-1"></i> Iluminación:</span>
+                            <strong th:text="'S/ ' + ${slot.recargoIluminacion}"></strong>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-top: 1rem; padding-top: 1rem; border-top: 1px dashed var(--fqs-border);">
+                            <span style="color: var(--fqs-navy); font-weight: 600;">Subtotal Cancha:</span>
+                            <strong id="subtotalCancha" th:text="'S/ ' + ${slot.precioTotal}" style="color: var(--fqs-primary-hover);"></strong>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="cancha-card" style="cursor: default; transition: none; padding: 2rem; border-radius: 14px; background: white; border: 1px solid var(--fqs-border); box-shadow: var(--shadow-sm); margin-bottom: 1.5rem;">
+                    <h2 style="font-size: 1.3rem; font-weight: 800; color: var(--fqs-navy); margin-top: 0; margin-bottom: 1.5rem; border-bottom: 1px solid var(--fqs-border); padding-bottom: 0.5rem;">Método de Pago</h2>
+                    
+                    <div style="margin-bottom: 1rem;">
+                        <select th:field="*{metodoPago}" required class="form-select" style="width: 100%; min-height: 44px; padding: 0.6rem 1rem; border: 1px solid var(--fqs-border); border-radius: 8px; background: white; font-size: 1rem;">
+                            <option th:each="mp : ${metodosPago}" th:value="${mp}" th:text="${mp}"></option>
+                        </select>
+                    </div>
+                    <p style="color: var(--fqs-text-muted); font-size: 0.9rem; margin: 0;">
+                        <span style="margin-right: 0.5rem;">ℹ️</span> El pago se realizará presencialmente en el local.
+                    </p>
+                </div>
+
+                <div class="cancha-card" style="cursor: default; transition: none; padding: 2rem; border-radius: 14px; background: white; border: 1px solid var(--fqs-border); box-shadow: var(--shadow-sm);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                        <span style="font-size: 1.2rem; font-weight: 700; color: var(--fqs-navy);">TOTAL A PAGAR:</span>
+                        <strong id="granTotal" style="font-size: 1.8rem; font-weight: 800; color: var(--fqs-primary-hover);" th:text="'S/ ' + ${#numbers.formatDecimal(slot.precioTotal, 1, 2)}"></strong>
+                    </div>
+                    
+                    <button type="submit" th:attr="data-hold-confirm=${holdConfirmation == true} ? 'true' : null" class="btn btn-primary" style="width: 100%; justify-content: center; min-height: 46px; font-size: 1.05rem; font-weight: 700; margin-bottom: 1rem;">
+                        Confirmar Reserva
+                    </button>
+                    <a th:href="@{/canchas/{id}(id=${cancha.id})}" class="btn btn-outline" style="width: 100%; justify-content: center; min-height: 44px; font-weight: 600;">
+                        Volver a horarios
+                    </a>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <div th:replace="~{fragments/layout :: footer}"></div>
+    
+    <!-- Scripts -->
+    <script th:replace="~{fragments/layout :: navbar-js}"></script>
+
+</body>
+</html>
+

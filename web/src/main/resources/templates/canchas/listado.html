@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catálogo de Canchas - Fredy Queen Soccer</title>
+    <link rel="icon" type="image/png" th:href="@{/img/favicon.png}">
+    <link rel="stylesheet" th:href="@{/css/global.css}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/public.css}">
+    <link rel="stylesheet" th:href="@{/css/catalog.css}">
+</head>
+<body class="catalog-page">
+
+    <!-- Skip Link WCAG -->
+    <a href="#main-content" class="skip-link">Saltar al contenido principal</a>
+
+    <!-- Navbar -->
+    <div th:replace="~{fragments/layout :: navbar}"></div>
+
+    <!-- Header del Catálogo -->
+    <header class="catalog-header">
+        <div class="container">
+            <span class="catalog-badge">Fredy Queen Soccer · Trujillo</span>
+            <h1 class="catalog-title">Encuentra tu cancha</h1>
+            <p class="catalog-desc"><span th:text="${canchas.size()}"></span> canchas · Fredy Queen Soccer · Trujillo</p>
+            <p class="catalog-lead">Elige tu cancha favorita y reserva tu horario por hora de forma rápida y sencilla.</p>
+        </div>
+    </header>
+
+    <!-- Contenido Principal -->
+    <main id="main-content" class="container catalog-main">
+        <!-- Controles: Filtros y Ordenamiento -->
+        <div class="catalog-controls">
+            <div class="filters" role="group" aria-label="Filtrar por tipo de cancha">
+                <a th:href="@{/canchas(orden=${filtroOrden})}" 
+                   th:classappend="${filtroTipo == null || filtroTipo == '' ? 'active' : ''}" 
+                   class="filter-btn">Todas</a>
+                <a th:href="@{/canchas(tipo='NORMAL', orden=${filtroOrden})}" 
+                   th:classappend="${filtroTipo == 'NORMAL' ? 'active' : ''}" 
+                   class="filter-btn">Normales</a>
+                <a th:href="@{/canchas(tipo='GRANDE', orden=${filtroOrden})}" 
+                   th:classappend="${filtroTipo == 'GRANDE' ? 'active' : ''}" 
+                   class="filter-btn">Grandes</a>
+            </div>
+
+            <div class="sorting">
+                <label for="sortSelect">Ordenar por:</label>
+                <select id="sortSelect" onchange="window.location.href=this.value">
+                    <option th:value="@{/canchas(tipo=${filtroTipo}, orden='numero')}" 
+                            th:selected="${filtroOrden == 'numero'}">Número</option>
+                    <option th:value="@{/canchas(tipo=${filtroTipo}, orden='precioAsc')}" 
+                            th:selected="${filtroOrden == 'precioAsc'}">Precio menor</option>
+                    <option th:value="@{/canchas(tipo=${filtroTipo}, orden='precioDesc')}" 
+                            th:selected="${filtroOrden == 'precioDesc'}">Precio mayor</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Empty State -->
+        <div th:if="${#lists.isEmpty(canchas)}" class="empty-state">
+            <div class="empty-icon">⚽</div>
+            <h2>No encontramos canchas</h2>
+            <p>No se encontraron canchas con los filtros seleccionados.</p>
+            <a th:href="@{/canchas}" class="btn btn-primary" style="display:inline-block; margin-top:1rem; padding:0.6rem 1.5rem; border-radius:20px; background:#10B981; color:white; text-decoration:none; font-weight:600;">Ver todas</a>
+        </div>
+
+        <!-- Grid de Canchas -->
+        <div class="canchas-grid" th:unless="${#lists.isEmpty(canchas)}">
+            <!-- Iterar sobre las canchas -->
+            <article th:each="cancha : ${canchas}" class="cancha-card" th:classappend="${!cancha.disponible ? 'disabled' : ''}">
+                
+                <!-- Imagen / Placeholder -->
+                <div class="card-image">
+                    <div class="cancha-badge" th:classappend="'badge-' + ${#strings.toLowerCase(cancha.tipo)}" th:text="${cancha.tipo}">NORMAL</div>
+                    <img th:if="${cancha.imagenUrl != null and !#strings.isEmpty(cancha.imagenUrl)}" 
+                         th:src="@{${cancha.imagenUrl}}" 
+                         th:alt="'Cancha ' + ${cancha.nombre} + ' de Fredy Queen Soccer'"
+                         onerror="this.style.display='none'; var ph = this.nextElementSibling; if(ph) ph.style.display='flex';">
+                    <div th:style="${cancha.imagenUrl != null and !#strings.isEmpty(cancha.imagenUrl)} ? 'display: none;' : ''" class="img-placeholder">
+                        <span class="placeholder-ball">⚽</span>
+                        <span th:text="${cancha.nombre}">Cancha 1</span>
+                    </div>
+                    
+                    <div th:if="${!cancha.disponible}" class="overlay-disabled">
+                        <span>Temporalmente no disponible</span>
+                    </div>
+                </div>
+
+                <!-- Info de la cancha -->
+                <div class="card-content">
+                    <div class="cancha-info-top">
+                        <h2 class="cancha-name" th:text="${cancha.nombre}">Cancha 1</h2>
+                        <p class="cancha-venue">Fredy Queen Soccer</p>
+                        <p class="cancha-location">📍 Trujillo, Perú</p>
+                        <div class="cancha-chips">
+                            <span class="chip chip-surface" th:text="${cancha.tipo == 'GRANDE' ? 'Fútbol 7 · Grass Sintético' : 'Fútbol 6 · Grass Sintético'}">Grass Sintético</span>
+                            <span class="chip">Duración 1h</span>
+                        </div>
+                    </div>
+                    
+                    <div class="cancha-card-footer">
+                        <div class="cancha-price-wrapper">
+                            <div class="cancha-price">
+                                <span class="currency">S/</span>
+                                <span class="amount" th:text="${cancha.precioHora}">40</span>
+                                <span class="unit">/ hora</span>
+                            </div>
+                            <div class="cancha-note">💡 +S/20 desde las 18:00</div>
+                        </div>
+                        
+                        <div class="cancha-action">
+                            <a th:if="${cancha.disponible}" th:href="@{/canchas/{id}(id=${cancha.id})}" class="btn-reservar" th:aria-label="'Reservar horario en ' + ${cancha.nombre}">Reservar</a>
+                            <button th:unless="${cancha.disponible}" class="btn-reservar-disabled" disabled>No disponible</button>
+                        </div>
+                    </div>
+                </div>
+            </article>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <div th:replace="~{fragments/layout :: footer}"></div>
+    
+    <!-- Scripts -->
+    <script th:replace="~{fragments/layout :: navbar-js}"></script>
+
+</body>
+</html>

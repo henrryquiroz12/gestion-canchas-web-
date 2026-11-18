@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/header :: head-dashboard}"></head>
+<body class="dashboard-body">
+    <div th:replace="~{fragments/layout :: navbar}"></div>
+    <main class="dashboard-main">
+        <div class="dashboard-topbar">
+            <div class="dashboard-topbar-text">
+                <h1>Dashboard Operativo</h1>
+                <p class="dashboard-topbar-sub">Resumen de actividad de Fredy Queen Soccer</p>
+                <div class="dashboard-topbar-meta">
+                    <span th:text="${#temporals.format(hoy, 'd ''de'' MMMM ''de'' yyyy', new java.util.Locale('es', 'PE'))}">17 de octubre de 2026</span>
+                    <span> · </span>
+                    <span th:if="${horarioHoy.cerrado}" class="text-danger fw-bold">Horario: CERRADO</span>
+                    <span th:unless="${horarioHoy.cerrado}" th:text="'Horario ' + ${#temporals.format(horarioHoy.inicioOperacion, 'HH:mm')} + ' - ' + (${#temporals.format(horarioHoy.finOperacion, 'HH:mm') == '00:00' ? '24:00' : #temporals.format(horarioHoy.finOperacion, 'HH:mm')})">Horario 07:00 - 24:00</span>
+                </div>
+            </div>
+        </div>
+        <div th:if="${mensajeExito}" class="alert-toast alert-toast--success">
+            <i class="bi bi-check-circle"></i>
+            <span th:text="${mensajeExito}"></span>
+        </div>
+        <div th:if="${mensajeError}" class="alert-toast alert-toast--error">
+            <i class="bi bi-exclamation-triangle"></i>
+            <span th:text="${mensajeError}"></span>
+        </div>
+        <section id="seccion-inicio" class="dashboard-section active">
+            <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-4 g-3 mb-4">
+                <div class="col">
+                    <div class="stat-card stat-card--lima h-100">
+                        <div class="stat-icon"><i class="bi bi-p-square"></i></div>
+                        <div>
+                            <span class="stat-number" th:text="${canchasHabilitadas}">0</span>
+                            <span class="stat-label d-block">Canchas Habilitadas</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="stat-card stat-card--celeste h-100">
+                        <div class="stat-icon"><i class="bi bi-calendar-event"></i></div>
+                        <div>
+                            <span class="stat-number" th:text="${reservasHoy.size()}">0</span>
+                            <span class="stat-label d-block">Reservas de hoy</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="stat-card stat-card--carbon h-100">
+                        <div class="stat-icon"><i class="bi bi-hourglass-split"></i></div>
+                        <div>
+                            <span class="stat-number" th:text="${pendientesHoy}">0</span>
+                            <span class="stat-label d-block">Reservas Pendientes Hoy</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="stat-card stat-card--dark h-100">
+                        <div class="stat-icon"><i class="bi bi-people"></i></div>
+                        <div>
+                            <span class="stat-number" th:text="${totalClientesStat}">0</span>
+                            <span class="stat-label d-block">Total de Clientes</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-3 mb-4">
+                <div class="col-12">
+                    <div class="analytics-card">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h3 class="analytics-title mb-0"><i class="bi bi-calendar-check"></i> Próximas reservas de hoy</h3>
+                            <a th:href="@{/admin/reservas(fecha=${hoy})}" class="btn btn-outline btn-sm">Ver todas →</a>
+                        </div>
+                        <div th:if="${#lists.isEmpty(reservasHoy)}" class="empty-reservas-box text-center py-4">
+                            <p class="text-muted mb-0">No hay reservas programadas para hoy.</p>
+                        </div>
+                        <div th:unless="${#lists.isEmpty(reservasHoy)}" class="table-responsive">
+                            <table class="table-custom">
+                                <thead>
+                                    <tr>
+                                        <th>Hora</th>
+                                        <th>Cancha</th>
+                                        <th>Cliente</th>
+                                        <th>Estado</th>
+                                        <th>Monto</th>
+                                        <th>Acción</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="res : ${reservasHoy}" th:if="${res.estado.name() != 'CANCELADO'}">
+                                        <td th:text="${res.horaInicio}"></td>
+                                        <td th:text="${res.cancha.nombre}"></td>
+                                        <td th:text="${res.cliente.nombreCompleto}"></td>
+                                        <td>
+                                            <span class="badge-estado" th:classappend="${'badge-' + #strings.toLowerCase(res.estado)}" th:text="${res.estado}"></span>
+                                        </td>
+                                        <td th:text="'S/ ' + ${res.montoTotal}"></td>
+                                        <td>
+                                            <a th:href="@{/admin/reservas/{id}(id=${res.id})}" class="btn btn-outline btn-sm" style="padding: 3px 10px; font-size: 0.8rem; border-radius: 6px;">Ver</a>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gráficos Legacy y otros (si desea mantenerlos) -->
+            <div class="row g-3">
+                <div class="col-lg-8">
+                    <div class="analytics-card h-100">
+                        <h3 class="analytics-title"><i class="bi bi-graph-up"></i> Monto de reservas mensual <span th:text="${anioActual}"></span></h3>
+                        <div class="chart-container">
+                            <canvas id="chartVentasMensuales"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="analytics-card h-100">
+                        <h3 class="analytics-title"><i class="bi bi-pie-chart"></i> Por Tipo de Cancha</h3>
+                        <div class="chart-container chart-container--small">
+                            <canvas id="chartPorTipoCancha"></canvas>
+                        </div>
+                        <p class="chart-empty" id="chartTipoCanchaEmpty">Aún no hay alquileres registrados para mostrar esta gráfica.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <script th:inline="javascript">
+                const ventasPorMes = /*[[${ventasPorMes}]]*/[];
+                const ventasPorTipoCancha = /*[[${ventasPorTipoCancha}]]*/ {};
+            </script>
+        </section>
+        
+    </main>
+
+    <footer th:replace="~{fragments/layout :: footer}"></footer>
+    <div th:replace="~{fragments/footer :: scripts}"></div>
+    <script th:src="@{/js/admin/dashboard-charts.js}"></script>
+</body>
+</html>

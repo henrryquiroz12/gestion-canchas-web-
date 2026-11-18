@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Cliente - Fredy Queen Soccer</title>
+    <link rel="icon" type="image/png" th:href="@{/img/favicon.png}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/global.css}">
+    <link rel="stylesheet" th:href="@{/css/public.css}">
+    <link rel="stylesheet" th:href="@{/css/registro-wizard.css}">
+</head>
+<body class="registro-page-body">
+
+    <!-- Skip Link WCAG -->
+    <a href="#main-content" class="skip-link">Saltar al contenido principal</a>
+
+    <!-- Navbar -->
+    <div th:replace="~{fragments/layout :: navbar}"></div>
+
+    <!-- Contenido Principal -->
+    <main id="main-content" class="registro-main">
+        <div class="registro-container">
+            
+            <!-- Columna Izquierda: Branding y Beneficios -->
+            <aside class="registro-branding-col" aria-label="Información institucional y beneficios">
+                <div class="registro-brand-card">
+                    <img th:src="@{/images/brand/logo-fredy-queen-soccer.jpg}" 
+                         alt="Logo oficial de Fredy Queen Soccer" 
+                         class="registro-brand-hero-logo" 
+                         onerror="this.style.display='none';">
+                    
+                    <div class="registro-brand-name">
+                        FREDY QUEEN <span>SOCCER</span>
+                    </div>
+                    
+                    <h1 class="registro-brand-title">Crea tu cuenta</h1>
+                    
+                    <p class="registro-brand-lead">
+                        Regístrate para reservar canchas y participar en nuestros torneos.
+                    </p>
+
+                    <div class="registro-benefits-list">
+                        <div class="benefit-item">
+                            <i class="bi bi-calendar2-check text-emerald" aria-hidden="true"></i>
+                            <div>
+                                <strong>Reserva inmediata</strong>
+                                <span>10 canchas de grass sintético disponibles por hora.</span>
+                            </div>
+                        </div>
+                        <div class="benefit-item">
+                            <i class="bi bi-trophy text-emerald" aria-hidden="true"></i>
+                            <div>
+                                <strong>Torneos y copas</strong>
+                                <span>Inscribe a tu equipo en nuestras competencias locales.</span>
+                            </div>
+                        </div>
+                        <div class="benefit-item">
+                            <i class="bi bi-shield-check text-emerald" aria-hidden="true"></i>
+                            <div>
+                                <strong>Gestión de alquileres</strong>
+                                <span>Consulta tus reservas, horarios y comprobantes en tu perfil.</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid rgba(255, 255, 255, 0.15);">
+                        <p style="font-size: 0.9rem; color: rgba(255, 255, 255, 0.85); margin: 0;">
+                            ¿Ya tienes una cuenta registrada? 
+                            <a th:href="@{/login}" style="color: #10B981; font-weight: 700; text-decoration: underline;">Iniciar sesión</a>
+                        </p>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Columna Derecha: Formulario Wizard de 3 Pasos -->
+            <section class="registro-wizard-col" aria-label="Formulario de registro">
+                <div class="registro-card">
+                    
+                    <!-- Encabezado del Wizard -->
+                    <div class="wizard-header">
+                        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+                            <h2 class="wizard-header-title">Registro de Cliente</h2>
+                            <span class="wizard-step-label" id="wizardStepLabel">Paso 1 de 3: Datos personales</span>
+                        </div>
+
+                        <!-- Barra de Progreso Accesible -->
+                        <div class="wizard-progress-track" role="progressbar" aria-valuemin="1" aria-valuemax="3" aria-valuenow="1" aria-label="Progreso del formulario de registro">
+                            <div class="wizard-progress-bar active" id="progBar1" aria-label="Paso 1: Datos personales" aria-current="step"></div>
+                            <div class="wizard-progress-bar" id="progBar2" aria-label="Paso 2: Contacto y ubicación"></div>
+                            <div class="wizard-progress-bar" id="progBar3" aria-label="Paso 3: Datos de acceso"></div>
+                        </div>
+                    </div>
+
+                    <!-- Mensaje de Error General Backend -->
+                    <div th:if="${mensajeError}" class="alert alert-error" role="alert" aria-live="assertive" style="margin-bottom: 1.5rem;">
+                        <i class="bi bi-exclamation-triangle-fill" aria-hidden="true"></i>
+                        <span th:text="${mensajeError}">Error al procesar el registro</span>
+                    </div>
+
+                    <!-- Formulario -->
+                    <div th:replace="~{fragments/reservation-hold :: banner}"></div>
+                    <form th:action="@{/registro}" th:object="${registroDto}" method="post" id="registroForm" th:data-dni-url="@{/registro/validar-dni}" novalidate>
+                        
+                        <!-- PASO 1: Datos Personales -->
+                        <fieldset class="wizard-step-fieldset" id="stepFieldset1" aria-labelledby="step1Legend">
+                            <legend class="wizard-step-legend" id="step1Legend">Paso 1: Datos personales</legend>
+
+                            <div class="form-group mb-3">
+                                <label for="fullName" class="form-label">Nombre completo *</label>
+                                <input type="text" 
+                                       class="form-control" 
+                                       th:field="*{fullName}" 
+                                       id="fullName" 
+                                       required 
+                                       maxlength="100" 
+                                       autocomplete="name" 
+                                       placeholder="Ej: Juan Pérez García">
+                                <div th:if="${#fields.hasErrors('fullName')}" th:errors="*{fullName}" class="invalid-feedback d-block" id="fullNameBackendError"></div>
+                                <span id="fullNameError" class="text-danger small mt-1 d-block" role="alert"></span>
+                            </div>
+
+                            <div class="form-group mb-3">
+                                <label for="dni" class="form-label">DNI (8 dígitos) *</label>
+                                <input type="text" 
+                                       class="form-control" 
+                                       th:field="*{dni}" 
+                                       id="dni" 
+                                       required 
+                                       maxlength="8" 
+                                       pattern="[0-9]{8}" 
+                                       inputmode="numeric" 
+                                       placeholder="Ej: 71234567">
+                                <div th:if="${#fields.hasErrors('dni')}" th:errors="*{dni}" class="invalid-feedback d-block" id="dniBackendError"></div>
+                                <span id="dniError" class="text-danger small mt-1 d-block" role="alert"></span>
+                            </div>
+
+                            <fieldset class="genero-fieldset mb-3" aria-describedby="generoError">
+                                <legend class="genero-legend">Género</legend>
+                                <div class="genero-grid">
+                                    <div class="genero-option" th:each="g : ${generos}">
+                                        <input type="radio" th:field="*{gender}" th:value="${g}"
+                                               th:id="'gen_' + ${g}" class="genero-radio-input" required>
+                                        <label th:for="'gen_' + ${g}" class="genero-label">
+                                            <span th:text="${g.label}">Opción</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                <span id="generoError" data-error-for="gender" role="alert"
+                                      class="text-danger small mt-1 d-block"
+                                      th:classappend="${#fields.hasErrors('gender')} ? 'invalid-feedback' : ''"
+                                      th:text="${#fields.hasErrors('gender')} ? 'Elige una opción' : ''"></span>
+                            </fieldset>
+
+                            <div class="wizard-actions wizard-actions--end">
+                                <button type="button" class="btn-wizard-next" id="btnNext1">
+                                    Siguiente paso <i class="bi bi-arrow-right" aria-hidden="true"></i>
+                                </button>
+                            </div>
+                        </fieldset>
+
+                        <!-- PASO 2: Contacto y Ubicación -->
+                        <fieldset class="wizard-step-fieldset" id="stepFieldset2" hidden aria-labelledby="step2Legend">
+                            <legend class="wizard-step-legend" id="step2Legend">Paso 2: Contacto y ubicación</legend>
+
+                            <div class="form-group mb-3">
+                                <label for="phoneNumber" class="form-label">Celular (9 dígitos, inicia con 9) *</label>
+                                <input type="tel" 
+                                       class="form-control" 
+                                       th:field="*{phoneNumber}" 
+                                       id="phoneNumber" 
+                                       required 
+                                       maxlength="9" 
+                                       pattern="9[0-9]{8}" 
+                                       inputmode="numeric" 
+                                       autocomplete="tel" 
+                                       placeholder="Ej: 949356493">
+                                <div th:if="${#fields.hasErrors('phoneNumber')}" th:errors="*{phoneNumber}" class="invalid-feedback d-block" id="phoneBackendError"></div>
+                                <span id="phoneNumberError" class="text-danger small mt-1 d-block" role="alert"></span>
+                            </div>
+
+                            <!-- Ubicacion Geografica: Departamento & Provincia -->
+                            <div class="ubicacion-grid mb-3">
+                                <div class="form-group mb-0">
+                                    <label for="department" class="form-label">Departamento *</label>
+                                    <select class="form-control" th:field="*{department}" id="department" required>
+                                        <option value="">Selecciona tu departamento</option>
+                                        <option th:each="dept : ${departamentos}"
+                                                th:value="${dept}"
+                                                th:text="${dept.label}">La Libertad</option>
+                                    </select>
+                                    <div th:if="${#fields.hasErrors('department')}" th:errors="*{department}" class="invalid-feedback d-block" id="deptBackendError"></div>
+                                    <span id="departmentError" class="text-danger small mt-1 d-block" role="alert"></span>
+                                </div>
+                                <div class="form-group mb-0">
+                                    <label for="province" class="form-label">Provincia *</label>
+                                    <select class="form-control" th:field="*{province}" id="province" required th:disabled="*{department == null}">
+                                        <option value="" th:text="*{department == null} ? 'Selecciona primero un departamento' : 'Selecciona tu provincia'">Selecciona primero un departamento</option>
+                                    </select>
+                                    <div th:if="${#fields.hasErrors('province')}" th:errors="*{province}" class="invalid-feedback d-block" id="provinceBackendError"></div>
+                                    <span id="provinceError" class="text-danger small mt-1 d-block" role="alert"></span>
+                                </div>
+                            </div>
+                            <div class="form-group mb-3">
+                                <label for="address" class="form-label">Dirección (opcional)</label>
+                                <input type="text" 
+                                       class="form-control" 
+                                       th:field="*{address}" 
+                                       id="address" 
+                                       maxlength="150" 
+                                       autocomplete="street-address" 
+                                       placeholder="Ej: Urb. Los Pinos Mz. A Lt. 5">
+                                <div th:if="${#fields.hasErrors('address')}" th:errors="*{address}" class="invalid-feedback d-block"></div>
+                            </div>
+
+                            <div class="wizard-actions">
+                                <button type="button" class="btn-wizard-prev" id="btnPrev2">
+                                    <i class="bi bi-arrow-left" aria-hidden="true"></i> Anterior
+                                </button>
+                                <button type="button" class="btn-wizard-next" id="btnNext2">
+                                    Siguiente paso <i class="bi bi-arrow-right" aria-hidden="true"></i>
+                                </button>
+                            </div>
+                        </fieldset>
+
+                        <!-- PASO 3: Credenciales de Acceso -->
+                        <fieldset class="wizard-step-fieldset" id="stepFieldset3" hidden aria-labelledby="step3Legend">
+                            <legend class="wizard-step-legend" id="step3Legend">Paso 3: Credenciales de acceso</legend>
+
+                            <div class="form-group mb-3">
+                                <label for="email" class="form-label">Correo electrónico *</label>
+                                <input type="text" inputmode="email" autocapitalize="none" 
+                                       class="form-control" 
+                                       th:field="*{email}" 
+                                       id="email" 
+                                       required 
+                                       maxlength="100" 
+                                       autocomplete="email" 
+                                       placeholder="ejemplo@gmail.com">
+                                <div th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="invalid-feedback d-block" id="emailBackendError"></div>
+                                <span id="emailError" class="text-danger small mt-1 d-block" role="alert"></span>
+                            </div>
+
+                            <div class="form-group mb-3">
+                                <label for="username" class="form-label">Nombre de usuario (4 a 30 caracteres) *</label>
+                                <input type="text" 
+                                       class="form-control" 
+                                       th:field="*{username}" 
+                                       id="username" 
+                                       required 
+                                       minlength="4" 
+                                       maxlength="30" 
+                                       autocomplete="username" 
+                                       placeholder="Ej: juanperez10">
+                                <small class="text-muted d-block mt-1">Solo letras, números, puntos y guiones bajos.</small>
+                                <div th:if="${#fields.hasErrors('username')}" th:errors="*{username}" class="invalid-feedback d-block" id="userBackendError"></div>
+                                <span id="usernameError" class="text-danger small mt-1 d-block" role="alert"></span>
+                            </div>
+
+                            <div class="form-group mb-3">
+                                <label for="password" class="form-label">Contraseña (mínimo 6 caracteres) *</label>
+                                <div class="password-container">
+                                    <input type="password" 
+                                           class="form-control" 
+                                           th:field="*{password}" 
+                                           id="password" 
+                                           required 
+                                           minlength="6" 
+                                           autocomplete="new-password" 
+                                           placeholder="Ingresa tu contraseña">
+                                    <button type="button" 
+                                            class="password-toggle" 
+                                            id="togglePass1" 
+                                            aria-label="Mostrar u ocultar contraseña">Mostrar</button>
+                                </div>
+                                <div th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="invalid-feedback d-block" id="passBackendError"></div>
+                                <span id="passwordError" class="text-danger small mt-1 d-block" role="alert"></span>
+                            </div>
+
+                            <div class="form-group mb-3">
+                                <label for="confirmPassword" class="form-label">Confirmar contraseña *</label>
+                                <div class="password-container">
+                                    <input type="password" 
+                                           class="form-control" 
+                                           th:field="*{confirmPassword}" 
+                                           id="confirmPassword" 
+                                           required 
+                                           minlength="6" 
+                                           autocomplete="new-password" 
+                                           placeholder="Repite tu contraseña">
+                                    <button type="button" 
+                                            class="password-toggle" 
+                                            id="togglePass2" 
+                                            aria-label="Mostrar u ocultar confirmación de contraseña">Mostrar</button>
+                                </div>
+                                <div th:if="${#fields.hasErrors('confirmPassword')}" th:errors="*{confirmPassword}" class="invalid-feedback d-block" id="confirmPassBackendError"></div>
+                                <span id="confirmPasswordError" class="text-danger small mt-1 d-block" role="alert"></span>
+                            </div>
+
+                            <div class="wizard-actions">
+                                <button type="button" class="btn-wizard-prev" id="btnPrev3">
+                                    <i class="bi bi-arrow-left" aria-hidden="true"></i> Anterior
+                                </button>
+                                <button type="submit" class="btn-wizard-submit" id="btnSubmit">
+                                    <i class="bi bi-check-circle" aria-hidden="true"></i> Registrarme ahora
+                                </button>
+                            </div>
+                        </fieldset>
+                    </form>
+
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <div th:replace="~{fragments/layout :: footer}"></div>
+
+    <!-- Scripts -->
+    <script th:replace="~{fragments/layout :: navbar-js}"></script>
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        window.PROVINCIAS_MAP = /*[[${provinciasMap}]]*/ {};
+        window.INITIAL_PROVINCE = /*[[${registroDto.province}]]*/ '';
+        /*]]>*/
+    </script>
+    <script th:src="@{/js/registro-wizard.js}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Password visibility toggles
+            const setupToggle = (btnId, inputId) => {
+                const btn = document.getElementById(btnId);
+                const input = document.getElementById(inputId);
+                if (btn && input) {
+                    btn.addEventListener('click', function() {
+                        const isPass = input.getAttribute('type') === 'password';
+                        input.setAttribute('type', isPass ? 'text' : 'password');
+                        btn.textContent = isPass ? 'Ocultar' : 'Mostrar';
+                        btn.setAttribute('aria-label', isPass ? 'Ocultar contraseña' : 'Mostrar contraseña');
+                    });
+                }
+            };
+            setupToggle('togglePass1', 'password');
+            setupToggle('togglePass2', 'confirmPassword');
+        });
+    </script>
+    <th:block th:replace="~{fragments/account-validation :: scripts}"></th:block>
+</body>
+</html>

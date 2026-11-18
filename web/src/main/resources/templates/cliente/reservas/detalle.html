@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalle de Reserva - Fredy Queen Soccer</title>
+    <link rel="stylesheet" th:href="@{/css/global.css}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/public.css}">
+    <link rel="stylesheet" th:href="@{/css/catalog.css}">
+</head>
+<body class="catalog-page">
+
+    <!-- Navbar -->
+    <div th:replace="~{fragments/layout :: navbar}"></div>
+
+    <!-- Contenido Principal -->
+    <main class="container catalog-main" style="min-height: 50vh; display: flex; justify-content: center; padding-top: 3rem; padding-bottom: 3rem;">
+        
+        <div style="width: 100%; max-width: 600px;">
+            
+            <div th:if="${error}" class="alert-toast alert-toast--error mb-4" style="position: static; transform: none; width: 100%;">
+                <i class="bi bi-exclamation-triangle"></i>
+                <span th:text="${error}"></span>
+            </div>
+            
+
+
+            <div class="cancha-card" style="cursor: default; transition: none; padding: 2rem; border-radius: 14px; background: white; border: 1px solid var(--fqs-border); box-shadow: var(--shadow-md);">
+                <div class="d-flex justify-content-between align-items-center mb-4" style="border-bottom: 1px solid var(--fqs-border); padding-bottom: 1rem;">
+                    <h2 style="font-size: 1.5rem; color: var(--fqs-navy); margin: 0; font-weight: 800;">Reserva <span th:text="'#' + ${alquiler.id}" style="color: var(--fqs-text-muted);"></span></h2>
+                    <span class="badge" th:classappend="${alquiler.estado.name() == 'CANCELADO'} ? 'badge-grande' : 'badge-normal'" th:text="${alquiler.estado}" style="padding: 6px 12px; font-size: 0.9rem;"></span>
+                </div>
+                
+                <div style="display: grid; gap: 1rem; margin-bottom: 2rem;">
+                    <div style="display: flex; justify-content: space-between;">
+                        <span style="color: var(--fqs-text-muted);">Cancha:</span>
+                        <strong th:text="${alquiler.cancha.nombre}" style="color: var(--fqs-navy);"></strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span style="color: var(--fqs-text-muted);">Fecha:</span>
+                        <strong th:text="${#temporals.format(alquiler.fechaAlquiler, 'dd/MM/yyyy')}"></strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span style="color: var(--fqs-text-muted);">Horario:</span>
+                        <strong th:text="${alquiler.horaInicio} + ' - ' + (${#strings.startsWith(alquiler.horaFin, '00:00')} ? '24:00' : ${alquiler.horaFin})"></strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span style="color: var(--fqs-text-muted);">Método de Pago:</span>
+                        <strong th:text="${alquiler.metodoPago}"></strong>
+                    </div>
+                </div>
+
+                <div style="background: var(--fqs-background, #F8FAFC); border: 1px solid var(--fqs-border); padding: 1.5rem; border-radius: 10px; margin-bottom: 2rem;">
+                    <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--fqs-navy); margin-top: 0; margin-bottom: 1rem; border-bottom: 1px solid var(--fqs-border); padding-bottom: 0.5rem;">Desglose de montos</h3>
+                    
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                        <span style="color: var(--fqs-text-muted);">Precio Base:</span>
+                        <span th:text="'S/ ' + ${alquiler.precioBaseAplicado}"></span>
+                    </div>
+                    
+                    <div th:if="${alquiler.recargoIluminacionAplicado > 0}" style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                        <span style="color: var(--fqs-text-muted);"><i class="bi bi-lightbulb-fill text-warning me-1"></i> Iluminación:</span>
+                        <span th:text="'S/ ' + ${alquiler.recargoIluminacionAplicado}"></span>
+                    </div>
+
+                    <div style="display: flex; justify-content: space-between; margin-top: 1rem; padding-top: 1rem; border-top: 2px solid var(--fqs-border); font-weight: 800; font-size: 1.2rem; color: var(--fqs-navy);">
+                        <span>Total de la reserva:</span>
+                        <span th:text="'S/ ' + ${alquiler.montoTotal}" style="color: var(--fqs-primary-hover);"></span>
+                    </div>
+                </div>
+
+                <p th:if="${alquiler.estado.name() == 'PENDIENTE'}" style="text-align: center; color: var(--fqs-text-muted); margin-bottom: 1.5rem; font-size: 0.9rem;">
+                    Recuerda realizar el pago presencialmente antes de iniciar tu turno.
+                </p>
+
+                <div style="display: grid; gap: 1rem;">
+                    <form th:if="${esCancelable}" th:action="@{/cliente/reservas/{id}/cancelar(id=${alquiler.id})}" method="post" onsubmit="return confirm('¿Estás seguro de cancelar esta reserva?');">
+                        <button type="submit" class="btn btn-outline" style="width: 100%; border-color: var(--fqs-danger, #DC2626); color: var(--fqs-danger, #DC2626); justify-content: center;">
+                            Cancelar Reserva
+                        </button>
+                    </form>
+                    
+                    <a th:href="@{/cliente/reservas}" class="btn btn-outline" style="width: 100%; text-align: center; justify-content: center; font-weight: 600;">
+                        Volver a Mis Reservas
+                    </a>
+                </div>
+            </div>
+            
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <div th:replace="~{fragments/layout :: footer}"></div>
+    
+    <!-- Scripts -->
+        <script th:replace="~{fragments/layout :: navbar-js}"></script>
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        document.addEventListener('DOMContentLoaded', function() {
+            const isCreada = /*[[${param.creada != null}]]*/ false;
+            const exitoMsg = /*[[${exito}]]*/ null;
+            if (isCreada && window.FqsToast) {
+                window.FqsToast.show('Reserva registrada correctamente.', 'success');
+            } else if (exitoMsg && window.FqsToast) {
+                window.FqsToast.show(exitoMsg, 'success');
+            }
+            if (isCreada && window.history && window.history.replaceState) {
+                window.history.replaceState({}, document.title, window.location.pathname);
+            }
+        });
+        /*]]>*/
+    </script>
+
+</body>
+</html>
+

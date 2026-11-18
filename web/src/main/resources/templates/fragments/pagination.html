@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head></head>
+<body>
+
+    <!--
+        Fragmento Reutilizable de Paginación FQS
+        Estilo: Anterior  1 2 3 4 5 ... 10  Siguiente
+        Colores: Carbon (#0F172A), Celeste (#38BDF8), Lima (#10B981)
+    -->
+    <div th:fragment="pager(pageNumber, totalPages, totalElements, pageSize, baseUrl, queryName, queryParam)" 
+         th:if="${totalPages > 1}"
+         class="fqs-pagination-wrapper">
+        
+        <div class="fqs-pagination-info">
+            Página <strong th:text="${pageNumber + 1}">1</strong> de <strong th:text="${totalPages}">10</strong>
+            <span class="text-muted" th:if="${totalElements > 0}">
+                (Total: <span th:text="${#numbers.formatInteger(totalElements, 1, 'POINT')}">150</span>)
+            </span>
+        </div>
+
+        <nav class="fqs-pagination-bar" aria-label="Navegación de páginas">
+            <!-- Botón Anterior -->
+            <a th:if="${pageNumber > 0}" 
+               th:href="@{${baseUrl}(page=${pageNumber - 1}, size=${pageSize}, ${queryName}=${queryParam})}" 
+               class="fqs-page-nav fqs-page-prev">
+                &laquo; Anterior
+            </a>
+            <span th:unless="${pageNumber > 0}" class="fqs-page-nav fqs-page-prev disabled">
+                &laquo; Anterior
+            </span>
+
+            <!-- Rango Inteligente de Páginas (1 2 3 4 5 ... 10) -->
+            <div class="fqs-page-numbers">
+                <th:block th:with="curr=${pageNumber},
+                                   total=${totalPages},
+                                   startPage=${curr > 4 ? curr - 4 : 0},
+                                   endPage=${curr + 4 < total ? curr + 4 : total - 1}">
+                    
+                    <!-- Primer número si estamos lejos del inicio -->
+                    <a th:if="${startPage > 0}" 
+                       th:href="@{${baseUrl}(page=0, size=${pageSize}, ${queryName}=${queryParam})}" 
+                       class="fqs-page-num">1</a>
+                    <span th:if="${startPage > 1}" class="fqs-page-ellipsis">...</span>
+
+                    <!-- Secuencia de números visibles -->
+                    <th:block th:each="p : ${#numbers.sequence(startPage, endPage)}">
+                        <span th:if="${p == curr}" 
+                              class="fqs-page-num active" 
+                              th:text="${p + 1}">1</span>
+                        <a th:unless="${p == curr}" 
+                           th:href="@{${baseUrl}(page=${p}, size=${pageSize}, ${queryName}=${queryParam})}" 
+                           class="fqs-page-num" 
+                           th:text="${p + 1}">2</a>
+                    </th:block>
+
+                    <!-- Último número si estamos lejos del final -->
+                    <span th:if="${endPage < total - 2}" class="fqs-page-ellipsis">...</span>
+                    <a th:if="${endPage < total - 1}" 
+                       th:href="@{${baseUrl}(page=${total - 1}, size=${pageSize}, ${queryName}=${queryParam})}" 
+                       class="fqs-page-num" 
+                       th:text="${total}">10</a>
+                </th:block>
+            </div>
+
+            <!-- Botón Siguiente -->
+            <a th:if="${pageNumber + 1 < totalPages}" 
+               th:href="@{${baseUrl}(page=${pageNumber + 1}, size=${pageSize}, ${queryName}=${queryParam})}" 
+               class="fqs-page-nav fqs-page-next">
+                Siguiente &raquo;
+            </a>
+            <span th:unless="${pageNumber + 1 < totalPages}" class="fqs-page-nav fqs-page-next disabled">
+                Siguiente &raquo;
+            </span>
+        </nav>
+    </div>
+
+</body>
+</html>
+

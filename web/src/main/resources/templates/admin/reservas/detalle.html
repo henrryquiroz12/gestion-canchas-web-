@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/header :: head-dashboard}"></head>
+<body class="dashboard-body">
+    <div th:replace="~{fragments/layout :: navbar}"></div>
+    <main class="dashboard-main">
+        <div class="dashboard-topbar">
+            <div class="dashboard-topbar-text">
+                <h1>Detalle de Reserva</h1>
+                <p>Información completa del alquiler</p>
+            </div>
+        </div>
+
+        <div th:if="${mensajeExito}" class="alert-toast alert-toast--success">
+            <i class="bi bi-check-circle"></i>
+            <span th:text="${mensajeExito}"></span>
+        </div>
+        <div th:if="${mensajeError}" class="alert-toast alert-toast--error">
+            <i class="bi bi-exclamation-triangle"></i>
+            <span th:text="${mensajeError}"></span>
+        </div>
+
+        <section class="dashboard-section active">
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="analytics-card">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h3 class="analytics-title mb-0">Reserva RES-<span th:text="${alquiler.id}"></span></h3>
+                            <span class="badge-estado" th:classappend="${'badge-' + #strings.toLowerCase(alquiler.estado)}" th:text="${alquiler.estado}"></span>
+                        </div>
+
+                        <div class="row mb-4">
+                            <div class="col-sm-6">
+                                <h5 class="text-muted small text-uppercase">Datos del Cliente</h5>
+                                <p class="mb-1 fw-bold" th:text="${alquiler.cliente.nombreCompleto}"></p>
+                                <p class="mb-1"><i class="bi bi-envelope"></i> <span th:text="${alquiler.cliente.email}"></span></p>
+                                <p class="mb-1"><i class="bi bi-telephone"></i> <span th:text="${alquiler.cliente.telefono}"></span></p>
+                                <p class="mb-0"><i class="bi bi-person-badge"></i> <span th:text="${alquiler.cliente.username}"></span></p>
+                            </div>
+                            <div class="col-sm-6 text-sm-end">
+                                <h5 class="text-muted small text-uppercase mt-3 mt-sm-0">Cancha</h5>
+                                <p class="mb-1 fw-bold fs-5" th:text="${alquiler.cancha.nombre}"></p>
+                                <p class="mb-0">Tipo: <span th:text="${alquiler.cancha.tipo}"></span></p>
+                            </div>
+                        </div>
+
+                        <div class="table-responsive mb-4">
+                            <table class="table-custom">
+                                <thead>
+                                    <tr>
+                                        <th>Fecha</th>
+                                        <th>Horario</th>
+                                        <th>Método Pago</th>
+                                        <th>Creación</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td th:text="${#temporals.format(alquiler.fechaAlquiler, 'dd/MM/yyyy')}"></td>
+                                        <td th:text="${alquiler.horaInicio} + ' - ' + ${alquiler.horaFin}"></td>
+                                        <td th:text="${alquiler.metodoPago}"></td>
+                                        <td th:text="${#temporals.format(alquiler.fechaCreacion, 'dd/MM/yyyy HH:mm')}"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <h5 class="text-muted small text-uppercase mb-3">Desglose de Precios</h5>
+                        <ul class="list-group list-group-flush mb-4">
+                            <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                                <span>Precio Base Aplicado</span>
+                                <span th:text="'S/ ' + ${alquiler.precioBaseAplicado}"></span>
+                            </li>
+                            <li th:if="${alquiler.recargoIluminacionAplicado > 0}" class="list-group-item d-flex justify-content-between align-items-center px-0">
+                                <span>Recargo Iluminación</span>
+                                <span th:text="'S/ ' + ${alquiler.recargoIluminacionAplicado}"></span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center px-0 fw-bold bg-light mt-2 p-2 rounded">
+                                <span>Total de la Reserva</span>
+                                <span class="fs-5 text-success" th:text="'S/ ' + ${alquiler.montoTotal}"></span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="analytics-card">
+                        <h3 class="analytics-title mb-4"><i class="bi bi-gear"></i> Acciones</h3>
+                        
+                        <div class="d-grid gap-2">
+                            <form th:if="${alquiler.estado.name() == 'PENDIENTE'}" th:action="@{'/admin/reservas/' + ${alquiler.id} + '/estado'}" method="post">
+                                <input type="hidden" name="estado" value="CONFIRMADO">
+                                <button type="submit" class="btn btn-success w-100 mb-2">Confirmar Reserva</button>
+                            </form>
+
+                            <form th:if="${alquiler.estado.name() == 'CONFIRMADO'}" th:action="@{'/admin/reservas/' + ${alquiler.id} + '/estado'}" method="post">
+                                <input type="hidden" name="estado" value="COMPLETADO">
+                                <button type="submit" class="btn btn-primary w-100 mb-2">Marcar como Completado</button>
+                            </form>
+
+                            <form th:if="${alquiler.estado.name() == 'PENDIENTE' or alquiler.estado.name() == 'CONFIRMADO'}" th:action="@{'/admin/reservas/' + ${alquiler.id} + '/estado'}" method="post" onsubmit="return confirm('¿Está seguro de cancelar esta reserva? Se liberará el slot.')">
+                                <input type="hidden" name="estado" value="CANCELADO">
+                                <button type="submit" class="btn btn-outline-danger w-100 mb-2">Cancelar Reserva</button>
+                            </form>
+
+                            <hr th:if="${alquiler.estado.name() == 'CONFIRMADO' or alquiler.estado.name() == 'COMPLETADO'}" class="my-3">
+                            <form th:if="${alquiler.estado.name() == 'CONFIRMADO' or alquiler.estado.name() == 'COMPLETADO'}" th:action="@{'/admin/facturas/generar/' + ${alquiler.id}}" method="post">
+                                <button type="submit" class="btn btn-warning w-100 mb-2"><i class="bi bi-receipt"></i> Generar Comprobante</button>
+                            </form>
+                            
+                            <a th:href="@{/admin/reservas}" class="btn btn-light border w-100 mt-3">Volver al listado</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer th:replace="~{fragments/layout :: footer}"></footer>
+    <div th:replace="~{fragments/footer :: scripts}"></div>
+</body>
+</html>

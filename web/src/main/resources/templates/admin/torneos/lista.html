@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/header :: head-dashboard}"></head>
+<body class="dashboard-body">
+
+    <!-- Navbar Namespaced -->
+    <div th:replace="~{fragments/layout :: navbar}"></div>
+
+    <!-- Main Content Landmark -->
+    <main class="dashboard-main">
+
+        <!-- Topbar Profesional Admin -->
+        <div class="dashboard-topbar">
+            <div class="dashboard-topbar-text">
+                <h1>Gestión de Inscripciones a Torneos</h1>
+                <p class="dashboard-topbar-sub">Administra las solicitudes de participación en los torneos de Fredy Queen Soccer.</p>
+                <div class="dashboard-topbar-meta">
+                    <span th:text="${totalInscripciones != null ? totalInscripciones : 0} + ' solicitudes'">0 solicitudes</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Alertas Toast Compartidas -->
+        <div th:if="${exito}" class="alert-toast alert-toast--success mb-4" role="status" aria-live="polite">
+            <i class="bi bi-check-circle"></i>
+            <span th:text="${exito}">Operación exitosa</span>
+        </div>
+        <div th:if="${info}" class="alert-toast alert-toast--info mb-4" style="background: #E0F2FE; color: #0369A1; border: 1px solid #BAE6FD;" role="status" aria-live="polite">
+            <i class="bi bi-info-circle"></i>
+            <span th:text="${info}">Información</span>
+        </div>
+        <div th:if="${error}" class="alert-toast alert-toast--error mb-4" role="alert" aria-live="assertive">
+            <i class="bi bi-exclamation-triangle"></i>
+            <span th:text="${error}">Error</span>
+        </div>
+
+        <!-- Sección de Tabla Reutilizando el Diseño del Dashboard Admin -->
+        <section class="dashboard-section active">
+            <div class="table-wrapper">
+                
+                <!-- Empty State Profesional -->
+                <div th:if="${#lists.isEmpty(inscripciones)}" class="empty-reservas-box text-center py-5">
+                    <i class="bi bi-inbox fs-1 text-muted" aria-hidden="true"></i>
+                    <p class="mt-2 text-muted mb-0">No se registran solicitudes de inscripción a torneos.</p>
+                </div>
+
+                <!-- Tabla Responsive con table-custom -->
+                <div th:unless="${#lists.isEmpty(inscripciones)}" class="table-responsive">
+                    <table class="table-custom">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Torneo</th>
+                                <th>Equipo</th>
+                                <th>Cliente Responsable</th>
+                                <th>Monto</th>
+                                <th>Fecha Inscripción</th>
+                                <th>Estado</th>
+                                <th style="text-align: right;">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="reg : ${inscripciones}">
+                                <td class="fw-bold" th:text="${reg.id}">1</td>
+                                <td>
+                                    <span class="fw-semibold text-primary" th:text="${reg.tournament.name}">Torneo</span>
+                                    <span th:if="${reg.tournament.isFree()}" class="badge bg-success-subtle text-success ms-1">Gratis</span>
+                                </td>
+                                <td>
+                                    <strong th:text="${reg.teamName}">Los Tigres</strong>
+                                </td>
+                                <td>
+                                    <div th:if="${reg.client != null}">
+                                        <div class="fw-semibold" th:text="${reg.client.fullName}">Juan Pérez</div>
+                                        <small class="text-muted">
+                                            DNI: <span th:text="${reg.client.dni}">12345678</span> | Tel: <span th:text="${reg.client.phoneNumber}">987654321</span>
+                                        </small>
+                                    </div>
+                                    <span th:unless="${reg.client != null}" class="text-muted">Cliente no disponible</span>
+                                </td>
+                                <td>
+                                    <span class="fw-bold" th:text="'S/ ' + ${#numbers.formatDecimal(reg.appliedAmount, 1, 2)}">S/ 0.00</span>
+                                </td>
+                                <td>
+                                    <span th:text="${#temporals.format(reg.registrationDate, 'dd/MM/yyyy HH:mm')}">18/10/2026 15:30</span>
+                                </td>
+                                <td>
+                                    <span class="badge-estado"
+                                          th:classappend="${reg.status.name() == 'CONFIRMADA'} ? 'badge-activo' :
+                                                          (${reg.status.name() == 'PENDIENTE_PAGO'} ? 'badge-pendiente' : 'badge-inactivo')"
+                                          th:text="${reg.status}"></span>
+                                </td>
+                                <td style="text-align: right;">
+                                    <div class="d-inline-flex gap-2">
+                                        <!-- Confirmar (si pendiente) -->
+                                        <form th:if="${reg.status.name() == 'PENDIENTE_PAGO'}" th:action="@{'/admin/torneos/inscripciones/' + ${reg.id} + '/confirmar'}" method="post" class="d-inline">
+                                            <button type="submit" class="btn btn-sm btn-outline-success" style="padding: 4px 10px; font-size: 0.85rem;" title="Confirmar abono y cupo" aria-label="Confirmar inscripción">
+                                                <i class="bi bi-check-lg" aria-hidden="true"></i> Confirmar
+                                            </button>
+                                        </form>
+
+                                        <!-- Cancelar (si pendiente o confirmada) -->
+                                        <form th:if="${reg.status.name() != 'CANCELADA'}" th:action="@{'/admin/torneos/inscripciones/' + ${reg.id} + '/cancelar'}" method="post" class="d-inline" onsubmit="return confirm('¿Seguro de cancelar esta inscripción?');">
+                                            <button type="submit" class="btn btn-sm btn-outline-danger" style="padding: 4px 10px; font-size: 0.85rem;" title="Cancelar inscripción" aria-label="Cancelar inscripción">
+                                                <i class="bi bi-x-lg" aria-hidden="true"></i> Cancelar
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Paginación estilo maqueta -->
+                <div th:replace="~{fragments/pagination :: pager(${registrationsPage.number}, ${registrationsPage.totalPages}, ${registrationsPage.totalElements}, ${registrationsPage.size}, '/admin/torneos', 'q', null)}"></div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer Compartido Namespaced -->
+    <footer th:replace="~{fragments/layout :: footer}"></footer>
+    <div th:replace="~{fragments/footer :: scripts}"></div>
+
+</body>
+</html>

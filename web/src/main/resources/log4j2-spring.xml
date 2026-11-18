@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+    <Properties>
+        <Property name="LOG_PATTERN">%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n</Property>
+        <Property name="LOG_DIR">logs</Property>
+    </Properties>
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+        </Console>
+        <RollingFile name="RollingFile" fileName="${LOG_DIR}/canchas-app.log" filePattern="${LOG_DIR}/canchas-app-%d{yyyy-MM-dd}-%i.log.gz">
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+                <SizeBasedTriggeringPolicy size="10MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="10"/>
+        </RollingFile>
+        <RollingFile name="ErrorFile" fileName="${LOG_DIR}/canchas-error.log" filePattern="${LOG_DIR}/canchas-error-%d{yyyy-MM-dd}-%i.log.gz">
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+            <Filters>
+                <ThresholdFilter level="ERROR" onMatch="ACCEPT" onMismatch="DENY"/>
+            </Filters>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+                <SizeBasedTriggeringPolicy size="10MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="10"/>
+        </RollingFile>
+    </Appenders>
+    <Loggers>
+        <!-- Nivel de log propio de la app: DEBUG en dev, INFO en prod -->
+        <SpringProfile name="dev">
+            <Logger name="com.canchas.web" level="DEBUG" additivity="false">
+                <AppenderRef ref="Console"/>
+                <AppenderRef ref="RollingFile"/>
+                <AppenderRef ref="ErrorFile"/>
+            </Logger>
+        </SpringProfile>
+        <SpringProfile name="prod">
+            <Logger name="com.canchas.web" level="INFO" additivity="false">
+                <AppenderRef ref="Console"/>
+                <AppenderRef ref="RollingFile"/>
+                <AppenderRef ref="ErrorFile"/>
+            </Logger>
+        </SpringProfile>
+        <!-- Reduce ruido de logs de librerías de terceros -->
+        <Logger name="org.hibernate" level="WARN"/>
+        <Logger name="org.springframework" level="WARN"/>
+        <Root level="INFO">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="RollingFile"/>
+            <AppenderRef ref="ErrorFile"/>
+        </Root>
+    </Loggers>
+</Configuration>

@@ -1,0 +1,465 @@
+/* registro-wizard.css - Wizard Accesible en 3 Pasos (WCAG 2.2 AA) */
+
+.registro-page-body {
+    background-color: var(--fqs-background, #F8FAFC);
+    min-height: 100vh;
+}
+
+.registro-main {
+    padding: clamp(24px, 4vw, 48px) var(--gutter, 16px);
+}
+
+.registro-container {
+    width: min(100%, 1160px);
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: clamp(24px, 3vw, 40px);
+    align-items: start;
+}
+
+@media (min-width: 992px) {
+    .registro-container {
+        grid-template-columns: 440px 1fr;
+    }
+}
+
+/* Columna Izquierda: Branding (Mobile: flujo normal, Desktop: sticky) */
+.registro-branding-col {
+    position: static;
+    top: auto;
+}
+
+@media (min-width: 992px) {
+    .registro-branding-col {
+        position: sticky;
+        top: 24px;
+    }
+}
+
+.registro-brand-card {
+    background: linear-gradient(145deg, #0B1E16 0%, #0F2D21 60%, #164231 100%);
+    border: 1px solid rgba(16, 185, 129, 0.25);
+    border-radius: var(--border-radius-lg, 16px);
+    padding: clamp(24px, 3vw, 36px);
+    color: #FFFFFF;
+    box-shadow: 0 10px 30px rgba(11, 30, 22, 0.35);
+}
+
+.registro-brand-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.registro-brand-logo {
+    width: 44px;
+    height: 44px;
+    border-radius: 8px;
+    object-fit: cover;
+    border: 1.5px solid #10B981;
+}
+
+.registro-brand-name {
+    font-size: 1.1rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    color: #FFFFFF;
+}
+
+.registro-brand-name span {
+    color: #10B981;
+}
+
+.registro-brand-title {
+    font-size: clamp(1.4rem, 2vw, 1.85rem);
+    font-weight: 800;
+    line-height: 1.25;
+    margin-bottom: 12px;
+    color: #FFFFFF;
+    letter-spacing: -0.02em;
+}
+
+.registro-brand-lead {
+    font-size: 0.98rem;
+    color: rgba(255, 255, 255, 0.82);
+    line-height: 1.5;
+    margin-bottom: 28px;
+}
+
+.registro-benefits-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.benefit-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.benefit-item i {
+    font-size: 1.25rem;
+    line-height: 1.2;
+    margin-top: 2px;
+}
+
+.benefit-item strong {
+    display: block;
+    font-size: 0.92rem;
+    color: #FFFFFF;
+    margin-bottom: 2px;
+}
+
+.benefit-item span {
+    display: block;
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.72);
+    line-height: 1.4;
+}
+
+/* Columna Derecha: Card del Formulario */
+.registro-card {
+    background: #FFFFFF;
+    border: 1px solid var(--fqs-border, #E2E8F0);
+    border-radius: var(--border-radius-lg, 16px);
+    padding: clamp(20px, 3vw, 36px);
+    box-shadow: 0 4px 20px rgba(15, 23, 42, 0.05);
+}
+
+.wizard-header {
+    margin-bottom: 24px;
+    border-bottom: 1px solid #F1F5F9;
+    padding-bottom: 16px;
+}
+
+.wizard-header-title {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #0F172A;
+    margin: 0;
+}
+
+.wizard-step-label {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: #059669;
+    background: #ECFDF5;
+    padding: 4px 10px;
+    border-radius: 20px;
+    border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+/* Barra de progreso de 3 pasos */
+.wizard-progress-track {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 8px;
+    margin-top: 14px;
+}
+
+.wizard-progress-bar {
+    height: 6px;
+    background: #E2E8F0;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
+
+.wizard-progress-bar.active {
+    background: #10B981;
+}
+
+.wizard-progress-bar.completed {
+    background: #059669;
+}
+
+/* Fieldsets del Wizard */
+.wizard-step-fieldset {
+    border: none;
+    padding: 0;
+    margin: 0;
+}
+
+.wizard-step-legend {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #1E293B;
+    margin-bottom: 18px;
+    float: none;
+    width: 100%;
+}
+
+/* Género (Hotfix FASE 16.4.8: Botones limpios, sin fondo gris, sin círculos, 3 en fila) */
+.genero-fieldset {
+    border: none !important;
+    border-radius: 0 !important;
+    padding: 0 !important;
+    margin: 0 0 1.25rem 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+}
+
+.genero-legend {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #0F172A;
+    margin: 0 0 8px 0;
+    padding: 0;
+    float: none;
+    width: 100%;
+    display: block;
+}
+
+.genero-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.25fr);
+    gap: 8px;
+    margin-top: 6px;
+    width: 100%;
+}
+
+.genero-option {
+    position: relative;
+    width: 100%;
+}
+
+.genero-radio-input {
+    position: absolute;
+    opacity: 0;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    clip: rect(0, 0, 0, 0);
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.genero-label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 6px;
+    min-height: 44px;
+    background: #FFFFFF;
+    border: 1.5px solid #D7DEE7;
+    border-radius: 11px;
+    cursor: pointer;
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: #0F172A;
+    text-align: center;
+    overflow-wrap: anywhere;
+    transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+    user-select: none;
+    box-sizing: border-box;
+    width: 100%;
+}
+
+.genero-radio-circle {
+    display: none !important;
+}
+
+.genero-label:hover {
+    border-color: #94A3B8;
+    background: #F8FAFC;
+}
+
+.genero-radio-input:focus-visible ~ .genero-label {
+    outline: 2px solid #059669;
+    outline-offset: 2px;
+}
+
+/* Estado seleccionado: botón COMPLETO verde FQS */
+.genero-radio-input:checked ~ .genero-label {
+    border-color: #059669;
+    background: #059669;
+    color: #FFFFFF;
+    box-shadow: 0 2px 6px rgba(5, 150, 105, 0.25);
+}
+
+@media (max-width: 480px) {
+    .genero-grid {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.25fr);
+        gap: 6px;
+    }
+    .genero-label {
+        font-size: 0.78rem;
+        padding: 0 4px;
+        min-height: 42px;
+    }
+}
+
+@media (max-width: 375px) {
+    .genero-grid {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.22fr);
+        gap: 4px;
+    }
+    .genero-label {
+        font-size: 0.74rem;
+        padding: 0 2px;
+        min-height: 42px;
+    }
+}
+
+/* Touch targets para inputs */
+.registro-card .form-control {
+    min-height: 44px;
+    border-color: #CBD5E1;
+    font-size: 0.95rem;
+}
+
+.registro-card .form-control:focus-visible,
+.registro-card .form-control:focus {
+    border-color: #10B981;
+    outline: 2px solid #10B981;
+    outline-offset: 1px;
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
+}
+
+.registro-card .form-control.is-invalid {
+    border-color: #EF4444;
+}
+
+/* Contenedor de Password */
+.password-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.password-container .form-control {
+    padding-right: 80px;
+}
+
+.password-toggle {
+    position: absolute;
+    right: 8px;
+    background: transparent;
+    border: none;
+    color: #64748B;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 6px 10px;
+    min-height: 34px;
+    border-radius: 4px;
+}
+
+.password-toggle:hover {
+    color: #0F172A;
+}
+
+.password-toggle:focus-visible {
+    outline: 2px solid #10B981;
+}
+
+/* Logo de marca en columna izquierda */
+.registro-brand-hero-logo {
+    display: block;
+    width: 140px;
+    max-width: 160px;
+    height: auto;
+    max-height: 140px;
+    object-fit: contain;
+    border-radius: 12px;
+    background: #FFFFFF;
+    padding: 6px;
+    margin-bottom: 1.25rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Botones y Navegacion del Wizard */
+.wizard-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-top: 28px;
+    padding-top: 20px;
+    border-top: 1px solid #F1F5F9;
+}
+
+.wizard-actions--end {
+    justify-content: flex-end;
+}
+
+.btn-wizard-prev {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 44px;
+    padding: 0 20px;
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: #475569;
+    background: #F1F5F9;
+    border: 1px solid #CBD5E1;
+    border-radius: var(--border-radius, 8px);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-wizard-prev:hover {
+    background: #E2E8F0;
+    color: #0F172A;
+}
+
+.btn-wizard-next,
+.btn-wizard-submit {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 44px;
+    padding: 0 24px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #FFFFFF !important;
+    background: #10B981;
+    border: none;
+    border-radius: var(--border-radius, 8px);
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.25);
+    transition: all 0.2s ease;
+}
+
+.btn-wizard-next:hover,
+.btn-wizard-submit:hover {
+    background: #059669;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);
+}
+
+.btn-wizard-prev:focus-visible,
+.btn-wizard-next:focus-visible,
+.btn-wizard-submit:focus-visible {
+    outline: 2px solid #10B981;
+    outline-offset: 2px;
+}
+
+@media (max-width: 576px) {
+    .wizard-actions {
+        flex-direction: column-reverse;
+        gap: 10px;
+    }
+    .wizard-actions .btn-wizard-prev,
+    .wizard-actions .btn-wizard-next,
+    .wizard-actions .btn-wizard-submit {
+        width: 100%;
+        justify-content: center;
+    }
+}
+/* Responsive Ubicación: Departamento & Provincia (FASE 16.4.2) */
+.ubicacion-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+@media (max-width: 600px) {
+    .ubicacion-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+}

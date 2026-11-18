@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fredy Queen Soccer - Reserva de Canchas y Torneos en Trujillo</title>
+    <link rel="icon" type="image/png" th:href="@{/img/favicon.png}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/global.css}">
+    <link rel="stylesheet" th:href="@{/css/public.css}">
+</head>
+<body>
+
+    <!-- Skip Link WCAG -->
+    <a href="#main-content" class="skip-link">Saltar al contenido principal</a>
+
+    <!-- Navbar -->
+    <div th:replace="~{fragments/layout :: navbar}"></div>
+
+    <!-- Contenido Principal -->
+    <main id="main-content" class="landing-page">
+
+        <!-- 1. Hero Principal: Busca, Reserva y Juega -->
+        <section class="hero-fqs hero-futbol">
+            <div class="hero-container hero-grid">
+                <!-- Columna Izquierda: Copywriting y CTAs -->
+                <div class="hero-content">
+                    <div class="hero-badge">
+                        <span class="hero-badge-dot"></span> FREDY QUEEN SOCCER · TRUJILLO
+                    </div>
+                    <h1 class="hero-title">
+                        Busca.<br>
+                        Reserva.<br>
+                        <span>Juega.</span>
+                    </h1>
+                    <p class="hero-lead">
+                        Tu partido en minutos. Elige entre nuestras 10 canchas de grass sintético con horarios por hora y confirmación inmediata en Trujillo.
+                    </p>
+                    <div class="hero-actions">
+                        <a th:href="@{/canchas}" class="btn btn-primary btn-hero hero-btn-main">
+                            Reservar Cancha <i class="bi bi-arrow-right" aria-hidden="true"></i>
+                        </a>
+                        <a th:href="@{/torneos}" class="btn btn-outline btn-hero hero-btn-sec">
+                            Ver Torneos <i class="bi bi-trophy" aria-hidden="true"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Columna Derecha: Carrusel con Control de Pausa Accesible -->
+                <div class="hero-carousel-wrapper">
+                    <div class="hero-carousel" id="fqsHeroCarousel" aria-roledescription="carousel" aria-label="Instalaciones y Fachada de Fredy Queen Soccer">
+                        <!-- Badge Discreto -->
+                        <div class="hero-carousel-badge">
+                            <i class="bi bi-geo-alt-fill" aria-hidden="true"></i> Fredy Queen Soccer · Trujillo
+                        </div>
+
+                        <!-- Botón Visible de Pausa / Reanudación (WCAG 2.2 AA) -->
+                        <button type="button" class="hero-carousel-toggle" id="fqsCarouselTogglePlay" aria-label="Pausar carrusel" title="Pausar carrusel">
+                            <i class="bi bi-pause-fill" id="fqsCarouselToggleIcon" aria-hidden="true"></i>
+                            <span class="visually-hidden" id="fqsCarouselToggleText">Pausar carrusel</span>
+                        </button>
+
+                        <!-- Track de Fotografías -->
+                        <div class="hero-carousel-track" id="fqsCarouselTrack">
+                            <div class="hero-carousel-slide">
+                                <img th:src="@{/images/business/facade-01.jpg}" alt="Fachada e instalaciones de Fredy Queen Soccer en Trujillo" loading="eager">
+                            </div>
+                            <div class="hero-carousel-slide">
+                                <img th:src="@{/images/business/facade-02.jpg}" alt="Complejo deportivo de canchas sintéticas Fredy Queen Soccer" loading="lazy">
+                            </div>
+                            <div class="hero-carousel-slide">
+                                <img th:src="@{/images/business/facade-03.jpg}" alt="Acceso y canchas deportivas Fredy Queen Soccer" loading="lazy">
+                            </div>
+                            <!-- Slide Clon de la Foto 1 para loop continuo -->
+                            <div class="hero-carousel-slide" aria-hidden="true">
+                                <img th:src="@{/images/business/facade-01.jpg}" alt="" loading="lazy">
+                            </div>
+                        </div>
+
+                        <!-- Controles Flechas Prev / Next -->
+                        <button type="button" class="hero-carousel-btn hero-carousel-prev" id="fqsCarouselPrev" aria-label="Imagen anterior">
+                            <i class="bi bi-chevron-left" aria-hidden="true"></i>
+                        </button>
+                        <button type="button" class="hero-carousel-btn hero-carousel-next" id="fqsCarouselNext" aria-label="Imagen siguiente">
+                            <i class="bi bi-chevron-right" aria-hidden="true"></i>
+                        </button>
+
+                        <!-- Indicadores / Puntos Inferiores -->
+                        <div class="hero-carousel-dots" id="fqsCarouselDots">
+                            <button type="button" class="hero-carousel-dot active" data-index="0" aria-label="Ver imagen 1"></button>
+                            <button type="button" class="hero-carousel-dot" data-index="1" aria-label="Ver imagen 2"></button>
+                            <button type="button" class="hero-carousel-dot" data-index="2" aria-label="Ver imagen 3"></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Barra de indicadores de confianza -->
+            <div class="hero-trust-bar">
+                <div class="trust-item"><i class="bi bi-lightning-charge-fill" aria-hidden="true"></i> Reserva en 3 clics</div>
+                <div class="trust-item"><i class="bi bi-dribbble" aria-hidden="true"></i> 10 canchas sintéticas fijas</div>
+                <div class="trust-item"><i class="bi bi-clock-fill" aria-hidden="true"></i> Horario habitual 07:00 - 24:00</div>
+                <div class="trust-item"><i class="bi bi-lightbulb-fill" aria-hidden="true"></i> Iluminación nocturna LED</div>
+            </div>
+        </section>
+
+        <!-- 2. Cómo Reservar (Tutorial para CLIENTE) -->
+        <section id="como-reservar" class="section-pasos">
+            <div class="container-fqs">
+                <div class="text-center mb-5">
+                    <span class="badge-sub">Paso a paso</span>
+                    <h2 class="section-heading">¿Cómo Reservar tu Cancha?</h2>
+                    <p class="section-subtitle">Sigue estos 4 sencillos pasos para asegurar tu hora de juego en minutos.</p>
+                </div>
+
+                <div class="pasos-grid">
+                    <div class="paso-card">
+                        <div class="paso-number" aria-hidden="true">1</div>
+                        <div class="paso-icon"><i class="bi bi-grid-fill" aria-hidden="true"></i></div>
+                        <h3>Elige tu cancha</h3>
+                        <p>Explora nuestras 10 canchas sintéticas y elige el formato que prefieras: Normal (Fútbol 6) o Grande (Fútbol 7).</p>
+                    </div>
+                    <div class="paso-card">
+                        <div class="paso-number" aria-hidden="true">2</div>
+                        <div class="paso-icon"><i class="bi bi-calendar2-week" aria-hidden="true"></i></div>
+                        <h3>Selecciona fecha y hora</h3>
+                        <p>Revisa la disponibilidad en tiempo real en bloques exactos de 60 minutos según tu conveniencia.</p>
+                    </div>
+                    <div class="paso-card">
+                        <div class="paso-number" aria-hidden="true">3</div>
+                        <div class="paso-icon"><i class="bi bi-tag-fill" aria-hidden="true"></i></div>
+                        <h3>Revisa los detalles</h3>
+                        <p>Consulta la tarifa clara de tu cancha y el recargo de iluminación si aplica (+S/20 desde las 18:00) con total transparencia.</p>
+                    </div>
+                    <div class="paso-card">
+                        <div class="paso-number" aria-hidden="true">4</div>
+                        <div class="paso-icon"><i class="bi bi-check-circle-fill" aria-hidden="true"></i></div>
+                        <h3>Confirma y juega</h3>
+                        <p>Confirma tu reserva de inmediato. El pago se efectúa de manera segura y presencial en las instalaciones del complejo.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. Información de Tarifas e Instalaciones -->
+        <section class="section-tarifas">
+            <div class="container-fqs">
+                <div class="text-center mb-5">
+                    <span class="badge-sub">Transparencia</span>
+                    <h2 class="section-heading">Tarifas e Instalaciones</h2>
+                    <p class="section-subtitle">Precios claros y fijos para que organices tu partido sin sorpresas.</p>
+                </div>
+
+                <div class="tarifas-grid">
+                    <div class="tarifa-card">
+                        <div class="tarifa-tag">8 Canchas Disponibles</div>
+                        <h3>Cancha Normal</h3>
+                        <p class="tarifa-sub">Ideal para Fútbol 6</p>
+                        <div class="tarifa-price">
+                            <span>Desde</span> <strong>S/ 40</strong> <small>/ hora</small>
+                        </div>
+                        <ul class="tarifa-features">
+                            <li><i class="bi bi-check2" aria-hidden="true"></i> Bloque exacto de 60 minutos</li>
+                            <li><i class="bi bi-check2" aria-hidden="true"></i> Grass sintético de fibra suave</li>
+                            <li><i class="bi bi-check2" aria-hidden="true"></i> Medidas ideales para juego dinámico</li>
+                        </ul>
+                        <a th:href="@{/canchas}" class="btn btn-outline w-100">Ver canchas</a>
+                    </div>
+
+                    <div class="tarifa-card tarifa-card--featured">
+                        <div class="tarifa-badge-pop">Más Espaciosa</div>
+                        <div class="tarifa-tag">2 Canchas Disponibles</div>
+                        <h3>Cancha Grande</h3>
+                        <p class="tarifa-sub">Ideal para Fútbol 7</p>
+                        <div class="tarifa-price">
+                            <span>Desde</span> <strong>S/ 60</strong> <small>/ hora</small>
+                        </div>
+                        <ul class="tarifa-features">
+                            <li><i class="bi bi-check2" aria-hidden="true"></i> Bloque exacto de 60 minutos</li>
+                            <li><i class="bi bi-check2" aria-hidden="true"></i> Amplia área de juego</li>
+                            <li><i class="bi bi-check2" aria-hidden="true"></i> Perfecta para partidos y torneos</li>
+                        </ul>
+                        <a th:href="@{/canchas}" class="btn btn-primary w-100">Reservar grande</a>
+                    </div>
+
+                    <div class="tarifa-card">
+                        <div class="tarifa-tag">Horario Vespertino y Nocturno</div>
+                        <h3>Iluminación LED</h3>
+                        <p class="tarifa-sub">A partir de las 18:00 hrs</p>
+                        <div class="tarifa-price">
+                            <span>Recargo</span> <strong>+ S/ 20</strong> <small>/ hora</small>
+                        </div>
+                        <ul class="tarifa-features">
+                            <li><i class="bi bi-check2" aria-hidden="true"></i> Activación automática desde las 18:00</li>
+                            <li><i class="bi bi-check2" aria-hidden="true"></i> Luminarias LED de alta potencia sin sombras</li>
+                            <li><i class="bi bi-check2" aria-hidden="true"></i> Máxima visibilidad para tus partidos nocturnos</li>
+                        </ul>
+                        <a th:href="@{/canchas}" class="btn btn-outline w-100">Consultar horarios</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. CTA Secundario -->
+        <section class="section-cta-futbol">
+            <div class="container-fqs">
+                <div class="cta-content">
+                    <h2>¿Listo para jugar?</h2>
+                    <p>Reserva tu cancha y disfruta tu próximo partido en Fredy Queen Soccer.</p>
+                    <a th:href="@{/canchas}" class="btn btn-primary btn-cta-lg">
+                        Ver canchas <i class="bi bi-arrow-right" aria-hidden="true"></i>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. Nuestra Ubicación -->
+        <section id="ubicacion" class="section-ubicacion">
+            <div class="container-fqs">
+                <div class="ubicacion-grid">
+                    <div class="ubicacion-info">
+                        <div>
+                            <span class="badge-sub">Encuéntranos</span>
+                            <h2 class="section-heading">Nuestra Ubicación</h2>
+                            <p class="section-subtitle" style="margin: 0; text-align: left;">
+                                Visítanos en nuestras instalaciones deportivas en la ciudad de Trujillo. Contamos con 10 canchas sintéticas, fácil acceso y atención de 07:00 a 24:00.
+                            </p>
+                        </div>
+
+                        <div class="ubicacion-card-items">
+                            <div class="ubicacion-item">
+                                <div class="ubicacion-item-icon"><i class="bi bi-geo-alt-fill" aria-hidden="true"></i></div>
+                                <div class="ubicacion-item-text">
+                                    <strong>Fredy Queen Soccer</strong>
+                                    <span>Trujillo, Perú</span>
+                                </div>
+                            </div>
+
+                            <div class="ubicacion-item">
+                                <div class="ubicacion-item-icon"><i class="bi bi-telephone-fill" aria-hidden="true"></i></div>
+                                <div class="ubicacion-item-text">
+                                    <strong>Teléfono de contacto</strong>
+                                    <a th:href="'tel:' + (${contactoTelefono} != null ? ${contactoTelefono} : '949356493')" 
+                                       th:text="${contactoTelefono} != null ? ${contactoTelefono} : '949356493'">949356493</a>
+                                </div>
+                            </div>
+
+                            <div class="ubicacion-item">
+                                <div class="ubicacion-item-icon"><i class="bi bi-envelope-fill" aria-hidden="true"></i></div>
+                                <div class="ubicacion-item-text">
+                                    <strong>Correo electrónico</strong>
+                                    <a th:href="'mailto:' + (${contactoEmail} != null ? ${contactoEmail} : 'freddyquinnsoccer@gmail.com')" 
+                                       th:text="${contactoEmail} != null ? ${contactoEmail} : 'freddyquinnsoccer@gmail.com'">freddyquinnsoccer@gmail.com</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="ubicacion-map-wrapper">
+                        <div th:replace="~{fragments/location :: business-map}"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer Compartido Namespaced -->
+    <div th:replace="~{fragments/layout :: footer}"></div>
+    <script th:replace="~{fragments/layout :: navbar-js}"></script>
+    <script th:src="@{/js/hero-carousel.js}"></script>
+
+</body>
+</html>
