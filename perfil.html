@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Perfil - Fredy Queen Soccer</title>
+    <link rel="icon" type="image/png" th:href="@{/img/favicon.png}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/global.css}">
+    <link rel="stylesheet" th:href="@{/css/public.css}">
+    <link rel="stylesheet" th:href="@{/css/catalog.css}">
+</head>
+<body class="catalog-page">
+
+    <!-- Navbar -->
+    <div th:replace="~{fragments/layout :: navbar}"></div>
+
+    <!-- Header -->
+    <header class="catalog-header" style="padding-bottom: 2rem; padding-top: 2rem;">
+        <div class="container">
+            <h1 class="catalog-title" style="font-size: 2rem;">Mi Perfil</h1>
+            <p class="catalog-lead">Gestiona tu información personal</p>
+        </div>
+    </header>
+
+    <!-- Contenido Principal Landmark -->
+    <main id="main-content" class="container catalog-main" style="min-height: 50vh; display: flex; justify-content: center; padding-bottom: 4rem;">
+        
+        <div class="fqs-card" style="width: 100%; max-width: 600px; padding: 2.5rem; border-radius: 14px; background: white; border: 1px solid var(--fqs-border); box-shadow: var(--shadow-sm);">
+            <form id="formPerfilCliente" method="post" novalidate th:action="@{/cliente/perfil/editar}">
+                <input type="hidden" th:if="${_csrf}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                <div class="modal-feedback"></div>
+                
+                <div style="display: grid; gap: 1.25rem; margin-bottom: 2rem;">
+                
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label for="perfilUsername" class="form-label" style="font-weight: 600; color: var(--fqs-navy); font-size: 0.9rem;">Usuario</label>
+                        <input type="text" id="perfilUsername" name="username" class="form-control" th:value="${cliente.username}" readonly style="background-color: var(--fqs-surface-soft, #F1F5F9); color: var(--fqs-text-muted); cursor: not-allowed;">
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label for="perfilDni" class="form-label" style="font-weight: 600; color: var(--fqs-navy); font-size: 0.9rem;">DNI</label>
+                        <input type="text" id="perfilDni" name="dni" class="form-control" th:value="${cliente.dni}" readonly style="background-color: var(--fqs-surface-soft, #F1F5F9); color: var(--fqs-text-muted); cursor: not-allowed;">
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label for="perfilNombreCompleto" class="form-label" style="font-weight: 600; color: var(--fqs-navy); font-size: 0.9rem;">Nombre Completo <span class="text-danger">*</span></label>
+                        <input type="text" id="perfilNombreCompleto" name="fullName" class="form-control" th:value="${cliente.fullName}" required maxlength="100">
+                        <span class="form-error-text text-danger small mt-1 d-block" data-error-for="fullName"></span>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label for="perfilEmail" class="form-label" style="font-weight: 600; color: var(--fqs-navy); font-size: 0.9rem;">Email <span class="text-danger">*</span></label>
+                        <input type="text" inputmode="email" autocapitalize="none" id="perfilEmail" name="email" class="form-control" th:value="${cliente.email}" required maxlength="100">
+                        <span class="form-error-text text-danger small mt-1 d-block" data-error-for="email"></span>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label for="clientePerfilTelefono" class="form-label" style="font-weight: 600; color: var(--fqs-navy); font-size: 0.9rem;">Celular (Perú) <span class="text-danger">*</span></label>
+                        <input type="tel" id="clientePerfilTelefono" name="phoneNumber" class="form-control" maxlength="9" minlength="9" pattern="^9[0-9]{8}$" inputmode="numeric" autocomplete="tel" required th:value="${cliente.phoneNumber}">
+                        <span class="form-error-text text-danger small mt-1 d-block" data-error-for="phoneNumber"></span>
+                    </div>
+
+                    <!-- Departamento -->
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label for="perfilDepartamento" class="form-label" style="font-weight: 600; color: var(--fqs-navy); font-size: 0.9rem;">Departamento <span class="text-danger">*</span></label>
+                        <select id="perfilDepartamento" name="department" class="form-control" required>
+                            <option value="" disabled th:selected="${cliente.department == null}">Selecciona tu departamento</option>
+                            <option th:each="dept : ${departamentos}" 
+                                    th:value="${dept}" 
+                                    th:text="${dept.label}" 
+                                    th:selected="${cliente.department == dept}">Amazonas</option>
+                        </select>
+                        <span class="form-error-text text-danger small mt-1 d-block" data-error-for="department"></span>
+                    </div>
+
+                    <!-- Provincia -->
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label for="perfilProvincia" class="form-label" style="font-weight: 600; color: var(--fqs-navy); font-size: 0.9rem;">Provincia <span class="text-danger">*</span></label>
+                        <select id="perfilProvincia" name="province" class="form-control" required th:disabled="${cliente.department == null}">
+                            <option value="" th:text="${cliente.department == null ? 'Selecciona primero un departamento' : 'Selecciona tu provincia'}">Selecciona tu provincia</option>
+                        </select>
+                        <span class="form-error-text text-danger small mt-1 d-block" data-error-for="province"></span>
+                    </div>
+
+                    <!-- Género -->
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label for="perfilGenero" class="form-label" style="font-weight: 600; color: var(--fqs-navy); font-size: 0.9rem;">Género</label>
+                        <select id="perfilGenero" name="gender" class="form-control" required>
+                            <option value="" disabled th:selected="${cliente.gender == null}">Elige una opción</option>
+                            <option th:each="g : ${generos}"
+                                    th:value="${g}"
+                                    th:text="${g.label}"
+                                    th:selected="${cliente.gender == g}">Masculino</option>
+                        </select>
+                        <span class="form-error-text text-danger small mt-1 d-block" data-error-for="gender"></span>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label for="perfilDireccion" class="form-label" style="font-weight: 600; color: var(--fqs-navy); font-size: 0.9rem;">Dirección (opcional)</label>
+                        <input type="text" id="perfilDireccion" name="address" class="form-control" th:value="${cliente.address}" maxlength="150">
+                        <span class="form-error-text text-danger small mt-1 d-block" data-error-for="address"></span>
+                    </div>
+                
+                </div>
+                
+                <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center; min-height: 46px; font-size: 1.05rem; font-weight: 700;">
+                    Guardar Cambios
+                </button>
+            </form>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <div th:replace="~{fragments/layout :: footer}"></div>
+    
+    <!-- Scripts -->
+    <th:block th:replace="~{fragments/layout :: navbar-js}"></th:block>
+    <script th:src="@{/js/core/ajax-form.js}"></script>
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        window.PROVINCIAS_MAP = /*[[${provinciasMap}]]*/ {};
+        window.CLIENT_PROVINCE = /*[[${cliente.province}]]*/ '';
+        /*]]>*/
+    </script>
+    <script th:src="@{/js/cliente/perfil.js}"></script>
+    <th:block th:replace="~{fragments/account-validation :: scripts}"></th:block>
+</body>
+</html>
